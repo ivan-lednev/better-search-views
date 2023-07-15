@@ -40,7 +40,7 @@ export async function mountContextTree({
     plugin.app.metadataCache
   );
 
-  await renderContextTree({
+  return renderContextTree({
     resultCount: 9000, // todo
     contextTrees,
     el,

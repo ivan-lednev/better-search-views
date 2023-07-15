@@ -1,0 +1,35 @@
+.better-backlinks-file-match > * {
+  margin-top: 0;
+  margin-bottom: 0;
+  white-space: normal;
+}
+
+.better-backlinks-file-match ul {
+  padding-inline-start: var(--list-indent);
+}
+
+.better-backlinks-file-match a {
+  text-decoration: none;
+  cursor: default;
+}
+
+.better-backlinks-results-container {
+  overflow: auto;
+}
+
+.better-backlinks-breadcrumbs {
+  display: flex;
+  align-items: baseline;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.better-backlinks-tree-item-children {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
+}
+
+.better-backlinks-breadcrumb-container {
+  display: flex;
+  gap: 0.5em;
+}

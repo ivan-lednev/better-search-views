@@ -17,7 +17,7 @@ export function renderContextTree({
 	el,
 	plugin,
 }: RenderContextTreeProps) {
-	render(
+	return render(
 		() => (
 			<PluginContextProvider plugin={plugin}>
 				<Tree

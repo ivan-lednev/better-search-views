@@ -50,7 +50,7 @@ export function Branch(props: BranchProps) {
 
   return (
     <Show when={props.contextTree}>
-      <div class="tree-item search-result snw-ref-item-container">
+      <div class="tree-item search-result better-backlinks-ref-item-container">
         <div class="tree-item-self search-result-file-title is-clickable">
           <div
             class={`tree-item-icon collapse-icon ${
@@ -74,7 +74,7 @@ export function Branch(props: BranchProps) {
           </div>
         </div>
         <Show when={childrenShown()}>
-          <div class="snw-tree-item-children">
+          <div class="better-backlinks-tree-item-children">
             <MatchSection
               sectionsWithMatches={props.contextTree.sectionsWithMatches}
             />

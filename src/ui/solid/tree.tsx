@@ -161,7 +161,7 @@ export function Tree(props: TreeProps) {
       </div>
       <div
         ref={markContextRef}
-        class="snw-results-container search-result-container"
+        class="better-backlinks-results-container search-result-container"
       >
         <For each={pages()}>
           {(tree) => (

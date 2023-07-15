@@ -1,54 +1,74 @@
-import { Plugin } from "obsidian";
+import { MarkdownView, Plugin, WorkspaceLeaf } from "obsidian";
 import { BetterBacklinksView } from "./sidebar";
 import { BetterBacklinksSettingTab } from "./setting-tab";
 
 interface BetterBacklinksSettings {
-	mySetting: string;
+  mySetting: string;
 }
 
 const defaultSettings: BetterBacklinksSettings = {
-	mySetting: "default",
+  mySetting: "default",
 };
 
 export default class BetterBacklinksPlugin extends Plugin {
-	settings: BetterBacklinksSettings;
+  settings: BetterBacklinksSettings;
 
-	async onload() {
-		await this.loadSettings();
-		this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
-		this.registerView(
-			BetterBacklinksView.VIEW_TYPE,
-			(leaf) => new BetterBacklinksView(leaf, this.app.workspace, this)
-		);
-		this.addRibbonIcon("dice", "Activate view", () => {
-			this.activateView();
-		});
-	}
+  async onload() {
+    await this.loadSettings();
 
-	onunload() {}
+    this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
 
-	async activateView() {
-		this.app.workspace.detachLeavesOfType(BetterBacklinksView.VIEW_TYPE);
+    this.registerView(
+      BetterBacklinksView.VIEW_TYPE,
+      (leaf) => new BetterBacklinksView(leaf, this.app.workspace, this)
+    );
 
-		await this.app.workspace.getRightLeaf(false).setViewState({
-			type: BetterBacklinksView.VIEW_TYPE,
-			active: true,
-		});
+    this.registerEvent(
+      this.app.workspace.on("active-leaf-change", async () => {
+        const activeMarkdownView =
+          this.app.workspace.getActiveViewOfType(MarkdownView);
 
-		this.app.workspace.revealLeaf(
-			this.app.workspace.getLeavesOfType(BetterBacklinksView.VIEW_TYPE)[0]
-		);
-	}
+        if (!activeMarkdownView) {
+          return;
+        }
 
-	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			defaultSettings,
-			await this.loadData()
-		);
-	}
+        this.app.workspace
+          .getLeavesOfType(BetterBacklinksView.VIEW_TYPE)
+          .forEach(({ view }) => {
+            if (view instanceof BetterBacklinksView) {
+              view.updateView(activeMarkdownView.file.path);
+            }
+          });
+      })
+    );
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
+    this.addCommand({
+      id: "show-backlinks",
+      name: "Show Backlinks",
+      callback: () => this.activateView(),
+    });
+  }
+
+  onunload() {}
+
+  async activateView() {
+    this.app.workspace.detachLeavesOfType(BetterBacklinksView.VIEW_TYPE);
+
+    await this.app.workspace.getRightLeaf(false).setViewState({
+      type: BetterBacklinksView.VIEW_TYPE,
+      active: true,
+    });
+
+    this.app.workspace.revealLeaf(
+      this.app.workspace.getLeavesOfType(BetterBacklinksView.VIEW_TYPE)[0]
+    );
+  }
+
+  async loadSettings() {
+    this.settings = Object.assign({}, defaultSettings, await this.loadData());
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
+  }
 }
