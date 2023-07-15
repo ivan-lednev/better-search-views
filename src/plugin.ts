@@ -1,6 +1,8 @@
-import { MarkdownView, Plugin, WorkspaceLeaf } from "obsidian";
+import { Component, MarkdownView, Plugin, WorkspaceLeaf } from "obsidian";
 import { BetterBacklinksView } from "./sidebar";
 import { BetterBacklinksSettingTab } from "./setting-tab";
+import * as patch from "monkey-around";
+import { mountContextTree } from "./ui/mount-context-tree";
 
 interface BetterBacklinksSettings {
   mySetting: string;
@@ -39,6 +41,34 @@ export default class BetterBacklinksPlugin extends Plugin {
               view.updateView(activeMarkdownView.file.path);
             }
           });
+      })
+    );
+
+    const plugin = this;
+
+    this.register(
+      // todo: use Proxy trap terminology for this
+      patch.around(Component.prototype, {
+        load(old: any) {
+          return function (...args: any[]) {
+            if (this.backlinksEl) {
+              // todo: fix timeout
+              setTimeout(() => {
+                // const mountPoint = createDiv({ cls: "better-backlinks" });
+                // this.backlinksEl.before(mountPoint);
+
+                this.backlinksEl.empty();
+                // todo: don't hardcode this
+                mountContextTree({
+                  path: this.file.path,
+                  el: this.backlinksEl,
+                  plugin,
+                });
+              }, 1000);
+            }
+            old.call(this, ...args);
+          };
+        },
       })
     );
 

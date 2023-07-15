@@ -1,5 +1,5 @@
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
-import { mountContextTree } from "./ui/components/mount-context-tree";
+import { mountContextTree } from "./ui/mount-context-tree";
 import BetterBacklinksPlugin from "./plugin";
 
 export class BetterBacklinksView extends ItemView {
@@ -23,8 +23,7 @@ export class BetterBacklinksView extends ItemView {
   }
 
   getIcon() {
-    // todo: find backlinks icon
-    return "file";
+    return "links-coming-in";
   }
 
   async onOpen() {

@@ -1,4 +1,4 @@
-import {AnyTree} from "../../ui/solid/tree";
+import { AnyTree } from "../../ui/solid/tree";
 
 function includesIgnoreCase(str: string, substr: string) {
   return str.toLowerCase().includes(substr.toLowerCase());

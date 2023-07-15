@@ -3,7 +3,6 @@ import {
 	HeadingCache, LinkCache,
 	ListItemCache,
 	SectionCache,
-	Stat,
 } from "obsidian";
 
 export interface createContextTreeProps {

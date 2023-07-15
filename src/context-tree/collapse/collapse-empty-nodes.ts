@@ -1,5 +1,5 @@
 import { HeadingContextTree, ListContextTree } from "../types";
-import { AnyTree } from "../../../solid/tree";
+import { AnyTree } from "../../ui/solid/tree";
 
 export function collapseEmptyNodes(contextTree: AnyTree) {
   function recursiveHeadings(

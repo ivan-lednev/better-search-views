@@ -1,20 +1,29 @@
-import {FileStats, HeadingCache, ListItemCache, Stat} from "obsidian";
+import { FileStats, HeadingCache, ListItemCache, Stat } from "obsidian";
 import {
   createContextTreeProps,
   FileContextTree,
   HeadingContextTree,
   ListContextTree,
 } from "../types";
-import {getHeadingBreadcrumbs, getHeadingIndexContaining} from "../../metadata-cache-util/heading";
 import {
-	getListBreadcrumbs,
-	getListItemIndexContaining,
-	getListItemWithDescendants,
-	isPositionInList
+  getHeadingBreadcrumbs,
+  getHeadingIndexContaining,
+} from "../../metadata-cache-util/heading";
+import {
+  getListBreadcrumbs,
+  getListItemIndexContaining,
+  getListItemWithDescendants,
+  isPositionInList,
 } from "../../metadata-cache-util/list";
-import {getFirstSectionUnder, getSectionContaining} from "../../metadata-cache-util/section";
-import {getTextAtPosition, isSamePosition} from "../../metadata-cache-util/position";
-import {formatListWithDescendants} from "../../metadata-cache-util/format";
+import {
+  getFirstSectionUnder,
+  getSectionContaining,
+} from "../../metadata-cache-util/section";
+import {
+  getTextAtPosition,
+  isSamePosition,
+} from "../../metadata-cache-util/position";
+import { formatListWithDescendants } from "../../metadata-cache-util/format";
 
 export function createContextTree({
   linksToTarget,
@@ -27,10 +36,7 @@ export function createContextTree({
 }: createContextTreeProps) {
   const linksWithContext = linksToTarget.map((link) => {
     return {
-      headingBreadcrumbs: getHeadingBreadcrumbs(
-        link.position,
-        headings
-      ),
+      headingBreadcrumbs: getHeadingBreadcrumbs(link.position, headings),
       listBreadcrumbs: getListBreadcrumbs(link.position, listItems),
       sectionCache: getSectionContaining(link.position, sections),
       link,
@@ -146,7 +152,10 @@ export function createContextTree({
   return root;
 }
 
-function createFileContextTree(filePath: string, stat: FileStats): FileContextTree {
+function createFileContextTree(
+  filePath: string,
+  stat: FileStats
+): FileContextTree {
   return {
     text: filePath,
     filePath,

@@ -1,7 +1,7 @@
-import { createContextTreesFor } from "./create-context-trees-for";
-import BetterBacklinksPlugin from "../../plugin";
+import BetterBacklinksPlugin from "../plugin";
 import { LinkCache, TAbstractFile } from "obsidian";
-import { renderContextTree } from "../solid/render-context-tree";
+import { renderContextTree } from "./solid/render-context-tree";
+import { createContextTreesFor } from "../context-tree/create-context-trees-for";
 
 // import { renderContextTree } from "../solid/render-context-tree";
 
