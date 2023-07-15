@@ -13,6 +13,21 @@
   cursor: default;
 }
 
+.better-backlinks-file-match ul {
+  position: relative;
+}
+
+/* Copied from Obsidian */
+.better-backlinks-file-match li > ul::before {
+  content: "\200B";
+  position: absolute;
+  display: block;
+  left: -1em;
+  top: 0;
+  bottom: 0;
+  border-right: var(--indentation-guide-width) solid var(--indentation-guide-color);
+}
+
 .better-backlinks-results-container {
   overflow: auto;
 }
