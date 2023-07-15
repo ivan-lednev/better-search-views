@@ -1,4 +1,4 @@
-import { AnyTree } from "./solid/tree";
+import { AnyTree } from "../ui/solid/tree";
 
 export const sortOptions = {
   alphabetical: "File name (A to Z)",

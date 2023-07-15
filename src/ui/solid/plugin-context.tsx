@@ -1,9 +1,9 @@
 import { JSX, createContext, useContext } from "solid-js";
-import SNWPlugin from "../../main";
 import { Keymap, MarkdownView } from "obsidian";
+import BetterBacklinksPlugin from "../../plugin";
 
 interface PluginContextProps {
-  plugin: SNWPlugin;
+  plugin: BetterBacklinksPlugin;
   children: JSX.Element;
 }
 
@@ -56,7 +56,6 @@ export function PluginContextProvider(props: PluginContextProps) {
         scroll: line,
       };
       if (path) {
-        // parameter signature for link-hover parent: HoverParent, targetEl: HTMLElement, linkText: string, sourcePath: string, eState: EphemeralState
         app.workspace.trigger(
           "link-hover",
           {},

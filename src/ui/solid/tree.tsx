@@ -1,18 +1,18 @@
 import { createSignal, For, Show } from "solid-js";
-import {
-  HeadingContextTree,
-  ListContextTree,
-  SectionWithMatch,
-} from "../components/context-tree/types";
 import { Branch } from "./branch";
-import { collapseEmptyNodes } from "../components/context-tree/collapse/collapse-empty-nodes";
 import { produce } from "immer";
-import { searchContextTree } from "../components/context-tree/search/search-context-tree-tree";
 import Mark from "mark.js";
 import { CacheItem, debounce, FileStats } from "obsidian";
 import { createInfiniteScroll } from "@solid-primitives/pagination";
 import { SlidersHorizontalIcon } from "./sliders-horizontal-icon";
-import { sortFiles, sortOptions } from "../sort-files";
+import {
+  HeadingContextTree,
+  ListContextTree,
+  SectionWithMatch,
+} from "../../context-tree/types";
+import { sortFiles, sortOptions } from "../../context-tree/sort-files";
+import { searchContextTree } from "../../context-tree/search/search-context-tree";
+import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 
 export interface AnyTree {
   breadcrumbs?: string[];

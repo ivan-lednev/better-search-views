@@ -26,6 +26,10 @@ export class BetterBacklinksView extends ItemView {
 	}
 
 	async onOpen() {
+    // todo
+    // const viewContentEl = this.containerEl.children[1] as HTMLElement;
+    this.containerEl.empty()
+
 		const activeFilePath = this.workspace.getActiveFile()?.path
 		if (activeFilePath) {
 			await mountContextTree({
