@@ -1,6 +1,7 @@
 import { createContextTreesFor } from "./create-context-trees-for";
 import BetterBacklinksPlugin from "../../plugin";
 import { LinkCache, TAbstractFile } from "obsidian";
+import {renderContextTree} from "../solid/render-context-tree";
 
 // import { renderContextTree } from "../solid/render-context-tree";
 
@@ -40,12 +41,10 @@ export async function mountContextTree({
 		plugin.app.metadataCache
 	);
 
-	el.createEl("pre", { text: JSON.stringify(contextTrees, null, 2)})
-
-	// await renderContextTree({
-	// 	resultCount: countOfRefs,
-	// 	contextTrees,
-	// 	el,
-	// 	plugin,
-	// });
+	await renderContextTree({
+		resultCount: 9000, // todo
+		contextTrees,
+		el,
+		plugin,
+	});
 }

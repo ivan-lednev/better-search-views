@@ -127,7 +127,7 @@ export function createContextTree({
       );
 
       context.sectionsWithMatches.push({
-        cache: firstSectionUnderHeading, // todo: don't need it here?
+        cache: firstSectionUnderHeading,
         text: getTextAtPosition(
           fileContents,
           firstSectionUnderHeading.position
