@@ -8,7 +8,7 @@ interface MatchSectionProps {
 }
 
 export function MatchSection(props: MatchSectionProps) {
-  const { handleClick, handleMouseover } = usePluginContext();
+  const { handleClick, handleMouseover, plugin } = usePluginContext();
 
   return (
     <Show when={props.sectionsWithMatches.length > 0}>
@@ -21,18 +21,13 @@ export function MatchSection(props: MatchSectionProps) {
 
             return (
               <div
-                // todo: fix
-                // @ts-ignore
-                uic="uic"
                 class="search-result-file-match better-backlinks-file-match"
                 ref={async (el) =>
                   await MarkdownRenderer.renderMarkdown(
                     section.text,
                     el,
                     "/",
-                    // todo: pull from context-tree
-                    // @ts-ignore
-                    window.thePlugin
+                    plugin
                   )
                 }
                 onClick={async () => {

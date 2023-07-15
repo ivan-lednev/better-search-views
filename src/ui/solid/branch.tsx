@@ -1,5 +1,5 @@
 import { createSignal, For, Show } from "solid-js";
-import { CollapseIcon } from "./collapse-icon";
+import { CollapseIcon } from "./icons/collapse-icon";
 import { Title } from "./title";
 import { AnyTree } from "./tree";
 import { MatchSection } from "./match-section";

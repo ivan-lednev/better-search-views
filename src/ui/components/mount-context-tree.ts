@@ -15,6 +15,7 @@ export interface PathsWithLinks {
   [path: string]: LinkCache[];
 }
 
+// todo: move to types
 declare module "obsidian" {
   interface MetadataCache {
     getBacklinksForFile: (file: TAbstractFile) => {
@@ -41,7 +42,6 @@ export async function mountContextTree({
   );
 
   return renderContextTree({
-    resultCount: 9000, // todo
     contextTrees,
     el,
     plugin,

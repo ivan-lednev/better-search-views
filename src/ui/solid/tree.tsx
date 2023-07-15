@@ -4,7 +4,7 @@ import { produce } from "immer";
 import Mark from "mark.js";
 import { CacheItem, debounce, FileStats } from "obsidian";
 import { createInfiniteScroll } from "@solid-primitives/pagination";
-import { SlidersHorizontalIcon } from "./sliders-horizontal-icon";
+import { SlidersHorizontalIcon } from "./icons/sliders-horizontal-icon";
 import {
   HeadingContextTree,
   ListContextTree,
@@ -27,7 +27,6 @@ export interface AnyTree {
 
 interface TreeProps {
   fileContextTrees: AnyTree[];
-  resultCount: number;
 }
 
 // todo: set this to a smaller number; if the intersection observer is in view after first render and there are more
@@ -147,7 +146,7 @@ export function Tree(props: TreeProps) {
       </Show>
       <div class="search-results-info" style="">
         <div class="clickable-icon search-results-result-count">
-          <span>{getCountMessage(props.resultCount)}</span>
+          <span>{getCountMessage(props.fileContextTrees.length)}</span>
         </div>
         <select class="dropdown" onChange={handleSortInput}>
           <For each={Object.entries(sortOptions)}>

@@ -10,6 +10,7 @@ interface PluginContextProps {
 interface PluginContextValue {
   handleClick: (path: string, line?: number) => Promise<void>;
   handleMouseover: (event: PointerEvent, path: string, line?: number) => void;
+  plugin: BetterBacklinksPlugin;
 }
 
 const PluginContext = createContext<PluginContextValue>();
@@ -18,14 +19,12 @@ export function PluginContextProvider(props: PluginContextProps) {
   const handleClick = async (path: string, line: number) => {
     const file = app.metadataCache.getFirstLinkpathDest(path, path);
 
-
     // todo
-//         thePlugin.app.workspace.getLeaf(Keymap.isModEvent(e)).openFile(fileT);
+    //         thePlugin.app.workspace.getLeaf(Keymap.isModEvent(e)).openFile(fileT);
     await props.plugin.app.workspace.getLeaf(false).openFile(file);
 
     if (Number.isInteger(line)) {
       props.plugin.app.workspace
-        // todo: this is sometimes bitching about null
         .getActiveViewOfType(MarkdownView)
         .setEphemeralState({ line });
     }
@@ -69,12 +68,18 @@ export function PluginContextProvider(props: PluginContextProps) {
   };
 
   return (
-    <PluginContext.Provider value={{ handleClick, handleMouseover }}>
+    <PluginContext.Provider
+      value={{ handleClick, handleMouseover, plugin: props.plugin }}
+    >
       {props.children}
     </PluginContext.Provider>
   );
 }
 
 export function usePluginContext() {
-  return useContext(PluginContext);
+  const pluginContext = useContext(PluginContext);
+  if (!pluginContext) {
+    throw new Error("pluginContext must be used inside a provider");
+  }
+  return pluginContext;
 }

@@ -6,14 +6,12 @@ import BetterBacklinksPlugin from "../../plugin";
 
 interface RenderContextTreeProps {
 	contextTrees: FileContextTree[];
-	resultCount: number;
 	el: HTMLElement;
 	plugin: BetterBacklinksPlugin;
 }
 
 export function renderContextTree({
 	contextTrees,
-	resultCount,
 	el,
 	plugin,
 }: RenderContextTreeProps) {
@@ -22,7 +20,6 @@ export function renderContextTree({
 			<PluginContextProvider plugin={plugin}>
 				<Tree
 					fileContextTrees={contextTrees}
-					resultCount={resultCount}
 				/>
 			</PluginContextProvider>
 		),
