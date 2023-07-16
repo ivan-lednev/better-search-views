@@ -26,7 +26,7 @@ import {
 import { formatListWithDescendants } from "../../metadata-cache-util/format";
 
 export function createContextTree({
-  linksToTarget,
+  positions,
   fileContents,
   stat,
   filePath,
@@ -34,7 +34,7 @@ export function createContextTree({
   headings = [],
   sections = [],
 }: createContextTreeProps) {
-  const linksWithContext = linksToTarget.map((link) => {
+  const linksWithContext = positions.map((link) => {
     return {
       headingBreadcrumbs: getHeadingBreadcrumbs(link.position, headings),
       listBreadcrumbs: getListBreadcrumbs(link.position, listItems),

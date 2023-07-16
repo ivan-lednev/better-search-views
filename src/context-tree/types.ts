@@ -8,7 +8,7 @@ import {
 export interface createContextTreeProps {
   // todo: better naming. Separate metadata cache?
   // todo: this is backlinks. Make it clear that this comes from target, and the other three from referrer
-  linksToTarget: LinkCache[];
+  positions: LinkCache[];
   stat: FileStats;
   fileContents: string;
   filePath: string;

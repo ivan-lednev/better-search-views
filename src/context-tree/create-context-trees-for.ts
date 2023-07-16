@@ -21,7 +21,7 @@ export function createContextTreesFor(
         filePath: path,
         stat: file.stat,
         fileContents: resolvedFileContents,
-        linksToTarget: links,
+        positions: links,
         ...fileCache,
       });
     })

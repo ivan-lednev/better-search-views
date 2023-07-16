@@ -56,7 +56,7 @@
 .search-result-file-matches {
   font-size: var(--font-ui-smaller);
   line-height: var(--line-height-tight);
-  background-color: initial;
+  background-color: revert;
   border-radius: var(--radius-s);
   overflow: hidden;
   margin: var(--size-4-1) 0 var(--size-4-2);

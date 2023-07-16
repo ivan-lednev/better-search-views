@@ -209,7 +209,7 @@ export default class BetterBacklinksPlugin extends Plugin {
     const mountPoint = createDiv();
 
     const contextTree = createContextTree({
-      linksToTarget: [containingSection],
+      positions: [containingSection],
       fileContents: content,
       stat: file.stat,
       filePath: file.path,

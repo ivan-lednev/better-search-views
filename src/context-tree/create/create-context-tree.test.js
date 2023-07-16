@@ -45,7 +45,7 @@ test("builds a tree with top-level links", () => {
 
   expect(
     createContextTree({
-      linksToTarget,
+      positions: linksToTarget,
       fileContents,
       ...cache,
     })
@@ -173,7 +173,7 @@ test("builds a tree with nested headings", () => {
 
   expect(
     createContextTree({
-      linksToTarget: backlinks,
+      positions: backlinks,
       fileContents,
       ...cache,
     })
@@ -293,7 +293,7 @@ test("builds a tree with nested lists", () => {
 
   expect(
     createContextTree({
-      linksToTarget,
+      positions: linksToTarget,
       fileContents,
       ...cache,
     })
@@ -430,7 +430,7 @@ test("gets only child list items to be displayed in a match section", () => {
 
   expect(
     createContextTree({
-      linksToTarget,
+      positions: linksToTarget,
       fileContents,
       ...cache,
     })
@@ -583,7 +583,7 @@ and this is the well
 
   expect(
     createContextTree({
-      linksToTarget: backlinks,
+      positions: backlinks,
       fileContents,
       ...cache,
     })
