@@ -51,28 +51,31 @@ export function Branch(props: BranchProps) {
   return (
     <Show when={props.contextTree}>
       <div class="tree-item search-result better-backlinks-ref-item-container">
-        <div class="tree-item-self search-result-file-title is-clickable">
-          <div
-            class={`tree-item-icon collapse-icon ${
-              childrenShown() ? "" : "is-collapsed"
-            }`}
-            onClick={() => setChildrenShown(!childrenShown())}
-          >
-            <CollapseIcon />
+        {/* TODO: fix this hack for file names */}
+        <Show when={breadcrumbs().some((b) => b.length > 0)}>
+          <div class="tree-item-self search-result-file-title is-clickable">
+            <div
+              class={`tree-item-icon collapse-icon ${
+                childrenShown() ? "" : "is-collapsed"
+              }`}
+              onClick={() => setChildrenShown(!childrenShown())}
+            >
+              <CollapseIcon />
+            </div>
+            <div
+              class="tree-item-inner"
+              onClick={handleTitleClick}
+              // @ts-ignore
+              onMouseOver={handleTitleMouseOver}
+            >
+              <Title
+                breadcrumbs={breadcrumbs()}
+                type={props.type}
+                contextTree={props.contextTree}
+              />
+            </div>
           </div>
-          <div
-            class="tree-item-inner"
-            onClick={handleTitleClick}
-            // @ts-ignore
-            onMouseOver={handleTitleMouseOver}
-          >
-            <Title
-              breadcrumbs={breadcrumbs()}
-              type={props.type}
-              contextTree={props.contextTree}
-            />
-          </div>
-        </div>
+        </Show>
         <Show when={childrenShown()}>
           <div class="better-backlinks-tree-item-children">
             <MatchSection

@@ -11,8 +11,8 @@ import * as patch from "monkey-around";
 import { mountContextTree } from "./ui/mount-context-tree";
 import { EmbeddedBacklinksComponent } from "./embedded-backlinks-component";
 import { getHeadingBreadcrumbs } from "./metadata-cache-util/heading";
-import {renderContextTree} from "./ui/solid/render-context-tree";
-import {createContextTree} from "./context-tree/create/create-context-tree";
+import { renderContextTree } from "./ui/solid/render-context-tree";
+import { createContextTree } from "./context-tree/create/create-context-tree";
 
 interface BetterBacklinksSettings {
   mySetting: string;
@@ -127,31 +127,30 @@ export default class BetterBacklinksPlugin extends Plugin {
       );
     }
 
-    this.register(
-      patch.around(Component.prototype, {
-        addChild(old: any) {
-          return function (child: unknown, ...args: any[]) {
-            if (
-              child instanceof Component &&
-              child.hasOwnProperty("backlinkDom") &&
-              this.getViewType() === "markdown"
-            ) {
-              this.backlinksEl.empty();
-              // todo: do we really need this?
-              child.unload();
-
-              return new EmbeddedBacklinksComponent(
-                plugin.app,
-                plugin,
-                this.backlinksEl
-              );
-            } else {
-              return old.call(this, child, ...args);
-            }
-          };
-        },
-      })
-    );
+    // this.register(
+    //   patch.around(Component.prototype, {
+    //     addChild(old: any) {
+    //       return function (child: unknown, ...args: any[]) {
+    //         if (
+    //           child instanceof Component &&
+    //           child.hasOwnProperty("backlinkDom") &&
+    //           this.getViewType() === "markdown"
+    //         ) {
+    //           this.backlinksEl.empty();
+    //           child.unload();
+    //
+    //           return new EmbeddedBacklinksComponent(
+    //             plugin.app,
+    //             plugin,
+    //             this.backlinksEl
+    //           );
+    //         } else {
+    //           return old.call(this, child, ...args);
+    //         }
+    //       };
+    //     },
+    //   })
+    // );
   }
 
   patchSearchView(searchView: any) {
@@ -176,36 +175,6 @@ export default class BetterBacklinksPlugin extends Plugin {
                 };
               },
             });
-            // patch.around(dom.constructor.prototype, {
-            //   addResult(old: any) {
-            //     return function (
-            //       app: any,
-            //       parentDom: any,
-            //       file: any,
-            //       result: any,
-            //       content: any,
-            //       showTitle: any
-            //     ) {
-            //       const searchResultItem = {
-            //         file: file,
-            //         info: { queued: false },
-            //         result,
-            //         content,
-            //         renderContentMatches() {
-            //           return createDiv({ text: "Hren" });
-            //         },
-            //       };
-            //
-            //       const vChildren = this.vChildren;
-            //       const resultDomLookup = this.resultDomLookup;
-            //       this.removeResult(file);
-            //       vChildren.addChild(searchResultItem);
-            //       resultDomLookup.set(file, searchResultItem);
-            //       this.changed();
-            //       return searchResultItem;
-            //     };
-            //   },
-            // });
             return old.call(this, child, ...args);
           };
         },
@@ -228,11 +197,6 @@ export default class BetterBacklinksPlugin extends Plugin {
         s.position.start.offset <= start && s.position.end.offset >= end
     );
 
-    const headingBreadcrumbs = getHeadingBreadcrumbs(
-      containingSection.position,
-      cache.headings
-    )?.map(headingCache => headingCache.heading)?.join(" > ");
-
     if (containingSection) {
       match.el.setText(
         content.substring(
@@ -242,15 +206,17 @@ export default class BetterBacklinksPlugin extends Plugin {
       );
     }
 
-    const mountPoint = createDiv()
+    const mountPoint = createDiv();
 
     const contextTree = createContextTree({
       linksToTarget: [containingSection],
       fileContents: content,
       stat: file.stat,
       filePath: file.path,
-      ...cache
-    })
+      ...cache,
+    });
+
+    contextTree.text = "";
 
     renderContextTree({
       contextTrees: [contextTree],
@@ -265,7 +231,7 @@ export default class BetterBacklinksPlugin extends Plugin {
     // wrapper.appendChild(match.el);
 
     // match.el = wrapper;
-    match.el = mountPoint
+    match.el = mountPoint;
   }
 
   patchSearchResultItem(SearchResultItem: any) {

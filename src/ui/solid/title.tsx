@@ -1,4 +1,4 @@
-import { Index, Match, Switch } from "solid-js";
+import {Index, Match, Show, Switch} from "solid-js";
 import { usePluginContext } from "./plugin-context";
 import { AnyTree } from "./tree";
 
