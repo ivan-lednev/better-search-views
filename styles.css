@@ -48,3 +48,11 @@
   display: flex;
   gap: 0.5em;
 }
+
+.better-search-wrapper {
+  padding: 5px;
+}
+
+.better-search-wrapper:not(:last-child) {
+  border-bottom: 1px solid var(--background-modifier-border)
+}

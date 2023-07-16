@@ -29,12 +29,22 @@ export async function mountContextTree({
   plugin,
   el,
 }: MountContextTreeProps) {
-  const activeFile = plugin.app.workspace.getActiveFile();
-  if (!activeFile) {
-    throw new Error(`No active file`);
-  }
-  const { data } = plugin.app.metadataCache.getBacklinksForFile(activeFile);
+  let data = null;
+  if (path) {
+    const file = plugin.app.metadataCache.getFirstLinkpathDest(path, "/");
+    if (!file) {
+      throw new Error(`No file by path ${path} relative to root`);
+    }
+    data = plugin.app.metadataCache.getBacklinksForFile(file).data;
+  } else {
+    const activeFile = plugin.app.workspace.getActiveFile();
 
+    if (!activeFile) {
+      throw new Error(`No active file`);
+    }
+
+    data = plugin.app.metadataCache.getBacklinksForFile(activeFile).data;
+  }
   const contextTrees = await createContextTreesFor(
     data,
     plugin.app.vault,
