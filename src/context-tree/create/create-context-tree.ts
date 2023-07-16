@@ -42,7 +42,7 @@ export function createContextTree({
       link,
     };
   });
-
+  
   const root = createFileContextTree(filePath, stat);
 
   for (const {

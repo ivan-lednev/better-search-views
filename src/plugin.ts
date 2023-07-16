@@ -1,5 +1,6 @@
 import {
   Component,
+  MarkdownRenderer,
   MarkdownView,
   Plugin,
   ViewCreator,
@@ -59,7 +60,7 @@ export default class BetterBacklinksPlugin extends Plugin {
 
     const plugin = this;
     // @ts-ignore
-    window.ComponentClass = Component;
+    window.MarkdownRenderer = MarkdownRenderer;
 
     this.register(
       patch.around(Component.prototype, {
@@ -182,40 +183,52 @@ export default class BetterBacklinksPlugin extends Plugin {
     );
   }
 
+  getPosForMatch(content: string, startIndex: number, endIndex: number) {
+    const startLine = content.substring(0, startIndex).split("\n").length - 1;
+    const endLine = content.substring(0, endIndex).split("\n").length - 1;
+
+    const startLinePos = content.substring(0, startIndex).lastIndexOf("\n") + 1;
+    const startCol = content.substring(startLinePos, startIndex).length;
+
+    const endLinePos = content.substring(0, endIndex).lastIndexOf("\n") + 1;
+    const endCol = content.substring(endLinePos, endIndex).length;
+
+    return {
+      position: {
+        start: { line: startLine, col: startCol, offset: startIndex },
+        end: { line: endLine, col: endCol, offset: endIndex },
+      },
+    };
+  }
+
   decorateMatch(container: any, match: any) {
     if (this.wrappedMatches.has(match)) {
       return;
     }
     this.wrappedMatches.add(match);
 
-    const { cache, content, start, end } = match;
-
+    // todo: there can be more matches
+    const {
+      cache,
+      content,
+      matches: [[start, end]],
+    } = match;
     const { file } = container;
-
-    const containingSection = cache.sections?.find(
-      (s: any) =>
-        s.position.start.offset <= start && s.position.end.offset >= end
-    );
-
-    if (containingSection) {
-      match.el.setText(
-        content.substring(
-          containingSection.position.start.offset,
-          containingSection.position.end.offset
-        )
-      );
-    }
 
     const mountPoint = createDiv();
 
     const contextTree = createContextTree({
-      positions: [containingSection],
+      positions: [this.getPosForMatch(content, start, end)],
       fileContents: content,
       stat: file.stat,
       filePath: file.path,
       ...cache,
     });
 
+    // todo: why is it rendering so often?
+    console.log(contextTree);
+
+    // todo: hack for file names
     contextTree.text = "";
 
     renderContextTree({
@@ -224,13 +237,6 @@ export default class BetterBacklinksPlugin extends Plugin {
       plugin: this,
     });
 
-    // const wrapper = createDiv({
-    //   text: headingBreadcrumbs ? `H: ${headingBreadcrumbs}` : "",
-    //   cls: "better-search-wrapper",
-    // });
-    // wrapper.appendChild(match.el);
-
-    // match.el = wrapper;
     match.el = mountPoint;
   }
 
