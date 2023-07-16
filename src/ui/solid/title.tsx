@@ -1,6 +1,9 @@
-import {Index, Match, Show, Switch} from "solid-js";
+import { Index, Match, Show, Switch } from "solid-js";
 import { usePluginContext } from "./plugin-context";
 import { AnyTree } from "./tree";
+import { ListIcon } from "./icons/list-icon";
+import { ArrowRightIcon } from "./icons/arrow-right-icon";
+import { HeadingIcon } from "./icons/heading-icon";
 
 interface TitleProps {
   breadcrumbs: string[];
@@ -38,7 +41,9 @@ export function Title(props: TitleProps) {
                 )
               }
             >
-              <div class="better-backlinks-breadcrumb-token">{i === 0 ? "•" : "↳"}</div>
+              <div class="better-backlinks-breadcrumb-token">
+                {i === 0 ? <ListIcon /> : <ArrowRightIcon />}
+              </div>
               <div>{removeListToken(breadcrumb())}</div>
             </div>
           </Match>
@@ -53,7 +58,9 @@ export function Title(props: TitleProps) {
                 )
               }
             >
-              <div class="better-backlinks-breadcrumb-token">{i === 0 ? "§" : "↳"}</div>
+              <div class="better-backlinks-breadcrumb-token">
+                {i === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
+              </div>
               <div>{breadcrumb()}</div>
             </div>
           </Match>

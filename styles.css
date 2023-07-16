@@ -68,3 +68,10 @@
   box-shadow: 0 0 0 1px var(--background-modifier-border);
   background-color: var(--search-result-background);
 }
+
+.better-context-icon {
+  height: var(--icon-s);
+  width: var(--icon-s);
+  color: var(--text-faint);
+  /*color: var(--icon-color);*/
+}
