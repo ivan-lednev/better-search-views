@@ -1,4 +1,4 @@
-import { FileStats, HeadingCache, ListItemCache, Stat } from "obsidian";
+import {FileStats, HeadingCache, ListItemCache, Stat, stripHeadingForLink} from "obsidian";
 import {
   createContextTreeProps,
   FileContextTree,
@@ -42,7 +42,7 @@ export function createContextTree({
       link,
     };
   });
-  
+
   const root = createFileContextTree(filePath, stat);
 
   for (const {
@@ -119,12 +119,14 @@ export function createContextTree({
         listItemCacheWithDescendants
       );
 
+      // todo: position highlighting is going to break because of formatting here
       context.sectionsWithMatches.push({
         // todo: fix
         // @ts-ignore
         cache: listItemCacheWithDescendants[0],
         text,
         filePath,
+        // position: link,
       });
     } else if (linkIsInsideHeading) {
       const firstSectionUnderHeading = getFirstSectionUnder(
@@ -132,6 +134,7 @@ export function createContextTree({
         sections
       );
 
+      // todo: highlighting doesn't make sense here
       context.sectionsWithMatches.push({
         cache: firstSectionUnderHeading,
         text: getTextAtPosition(
@@ -145,6 +148,7 @@ export function createContextTree({
         cache: sectionCache,
         text: getTextAtPosition(fileContents, sectionCache.position),
         filePath,
+        matchPosition: link
       });
     }
   }

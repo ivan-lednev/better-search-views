@@ -1,8 +1,8 @@
 import {
-	FileStats,
-	HeadingCache, LinkCache,
-	ListItemCache,
-	SectionCache,
+  FileStats,
+  HeadingCache, LinkCache,
+  ListItemCache, Pos,
+  SectionCache,
 } from "obsidian";
 
 export interface createContextTreeProps {
@@ -21,6 +21,7 @@ export interface SectionWithMatch {
   text: string;
   cache: SectionCache;
   filePath: string;
+  matchPosition?: { position: Pos }
 }
 
 export interface WithListChildren {

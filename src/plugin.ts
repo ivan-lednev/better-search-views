@@ -3,6 +3,7 @@ import {
   MarkdownRenderer,
   MarkdownView,
   Plugin,
+  TFile,
   ViewCreator,
   WorkspaceLeaf,
 } from "obsidian";
@@ -215,8 +216,6 @@ export default class BetterBacklinksPlugin extends Plugin {
     } = match;
     const { file } = container;
 
-    const mountPoint = createDiv();
-
     const contextTree = createContextTree({
       positions: [this.getPosForMatch(content, start, end)],
       fileContents: content,
@@ -228,6 +227,8 @@ export default class BetterBacklinksPlugin extends Plugin {
     // todo: why is it rendering so often?
     console.log(contextTree);
 
+    const mountPoint = createDiv();
+
     // todo: hack for file names
     contextTree.text = "";
 
@@ -238,6 +239,21 @@ export default class BetterBacklinksPlugin extends Plugin {
     });
 
     match.el = mountPoint;
+  }
+
+  createContextTreeFromMatchPositions(
+    positions: any,
+    cache: any,
+    content: any,
+    file: TFile
+  ) {
+    return createContextTree({
+      positions,
+      fileContents: content,
+      stat: file.stat,
+      filePath: file.path,
+      ...cache,
+    });
   }
 
   patchSearchResultItem(SearchResultItem: any) {
