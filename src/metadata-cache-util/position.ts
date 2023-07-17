@@ -39,3 +39,24 @@ export function createPositionFromOffsets(
     },
   };
 }
+
+export function highlightAtPositionWithRecalculatingOffsets(
+  position: Pos,
+  containerPosition: Pos,
+  text: string
+) {
+  const containerStart = containerPosition.start.offset;
+  const positionLength = position.end.offset - position.start.offset;
+
+  const startOfPositionInContainer = position.start.offset - containerStart;
+  const endOfPositionInContainer = positionLength + startOfPositionInContainer;
+
+  const beforeHighlight = text.substring(0, startOfPositionInContainer);
+  const highlight = text.substring(
+    startOfPositionInContainer,
+    endOfPositionInContainer
+  );
+  const afterHighlight = text.substring(endOfPositionInContainer);
+
+  return `${beforeHighlight}<span class="search-result-file-matched-text">${highlight}</span>${afterHighlight}`;
+}

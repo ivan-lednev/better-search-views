@@ -1,4 +1,4 @@
-import {FileStats, HeadingCache, ListItemCache, Stat, stripHeadingForLink} from "obsidian";
+import { FileStats, HeadingCache, ListItemCache } from "obsidian";
 import {
   createContextTreeProps,
   FileContextTree,
@@ -21,6 +21,7 @@ import {
 } from "../../metadata-cache-util/section";
 import {
   getTextAtPosition,
+  highlightAtPositionWithRecalculatingOffsets,
   isSamePosition,
 } from "../../metadata-cache-util/position";
 import { formatListWithDescendants } from "../../metadata-cache-util/format";
@@ -144,11 +145,25 @@ export function createContextTree({
         filePath,
       });
     } else {
+      if (!sectionCache) {
+        throw new Error(`No section cache found in ${filePath}`);
+      }
+
+      const sectionText = getTextAtPosition(
+        fileContents,
+        sectionCache.position
+      );
+      const textWithHighlightedMatch =
+        highlightAtPositionWithRecalculatingOffsets(
+          link.position,
+          sectionCache?.position,
+          sectionText
+        );
+
       context.sectionsWithMatches.push({
         cache: sectionCache,
-        text: getTextAtPosition(fileContents, sectionCache.position),
+        text: textWithHighlightedMatch,
         filePath,
-        match: link
       });
     }
   }

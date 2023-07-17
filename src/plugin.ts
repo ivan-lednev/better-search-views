@@ -155,21 +155,6 @@ export default class BetterBacklinksPlugin extends Plugin {
     match.el = mountPoint;
   }
 
-  createContextTreeFromMatchPositions(
-    positions: any,
-    cache: any,
-    content: any,
-    file: TFile
-  ) {
-    return createContextTree({
-      positions,
-      fileContents: content,
-      stat: file.stat,
-      filePath: file.path,
-      ...cache,
-    });
-  }
-
   patchSearchResultItem(SearchResultItem: any) {
     const plugin = this;
     const trap = {
