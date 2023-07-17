@@ -207,7 +207,12 @@ export default class BetterBacklinksPlugin extends Plugin {
     if (this.wrappedMatches.has(match)) {
       return;
     }
-    this.wrappedMatches.add(match);
+
+    try {
+      this.wrappedMatches.add(match);
+    } catch (e) {
+      console.error(`Error on ${match}. ${e}`);
+    }
 
     // todo: there can be more matches
     const {
@@ -276,11 +281,14 @@ export default class BetterBacklinksPlugin extends Plugin {
               plugin.getPosForMatch(content, start, end)
           );
 
+          // not sure why this is sometimes undefined (maybe for virtual values?)
           const firstMatch = this.vChildren._children[0];
-          plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions);
+          if (firstMatch) {
+            plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions);
 
-          // we already mounted the whole thing to the first child, so discard the rest
-          this.vChildren._children = this.vChildren._children.slice(0, 1);
+            // we already mounted the whole thing to the first child, so discard the rest
+            this.vChildren._children = this.vChildren._children.slice(0, 1);
+          }
 
           return result;
         };
