@@ -203,7 +203,7 @@ export default class BetterBacklinksPlugin extends Plugin {
     };
   }
 
-  decorateMatch(container: any, match: any) {
+  mountContextTreeOnMatchEl(container: any, match: any, positions: any[]) {
     if (this.wrappedMatches.has(match)) {
       return;
     }
@@ -218,7 +218,7 @@ export default class BetterBacklinksPlugin extends Plugin {
     const { file } = container;
 
     const contextTree = createContextTree({
-      positions: [this.getPosForMatch(content, start, end)],
+      positions,
       fileContents: content,
       stat: file.stat,
       filePath: file.path,
@@ -271,15 +271,16 @@ export default class BetterBacklinksPlugin extends Plugin {
           plugin.wrappedFileMatches.add(this);
 
           const matchPositions = this.vChildren._children.map(
+            // todo: works only for one match per block
             ({ content, matches: [[start, end]] }: any) =>
               plugin.getPosForMatch(content, start, end)
           );
 
-          console.log({ matchPositions });
+          const firstMatch = this.vChildren._children[0];
+          plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions);
 
-          this.vChildren._children.forEach((child: any) =>
-            plugin.decorateMatch(this, child)
-          );
+          // we already mounted the whole thing to the first child, so discard the rest
+          this.vChildren._children = this.vChildren._children.slice(0, 1);
 
           return result;
         };
