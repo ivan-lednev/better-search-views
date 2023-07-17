@@ -27,6 +27,7 @@ const defaultSettings: BetterBacklinksSettings = {
 export default class BetterBacklinksPlugin extends Plugin {
   settings: BetterBacklinksSettings;
   wrappedMatches = new WeakSet();
+  wrappedFileMatches = new WeakSet();
 
   async onload() {
     await this.loadSettings();
@@ -262,6 +263,19 @@ export default class BetterBacklinksPlugin extends Plugin {
       renderContentMatches(old: any) {
         return function (...args: any[]) {
           const result = old.call(this, ...args);
+
+          if (plugin.wrappedFileMatches.has(this)) {
+            return result;
+          }
+
+          plugin.wrappedFileMatches.add(this);
+
+          const matchPositions = this.vChildren._children.map(
+            ({ content, matches: [[start, end]] }: any) =>
+              plugin.getPosForMatch(content, start, end)
+          );
+
+          console.log({ matchPositions });
 
           this.vChildren._children.forEach((child: any) =>
             plugin.decorateMatch(this, child)
