@@ -11,6 +11,7 @@ import { BetterBacklinksSettingTab } from "./setting-tab";
 import * as patch from "monkey-around";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import { createContextTree } from "./context-tree/create/create-context-tree";
+import { createPositionFromOffsets } from "./metadata-cache-util/position";
 
 interface BetterBacklinksSettings {
   mySetting: string;
@@ -55,31 +56,26 @@ export default class BetterBacklinksPlugin extends Plugin {
         },
       })
     );
-
-    this.addCommand({
-      id: "show-backlinks",
-      name: "Show Backlinks",
-      callback: () => this.activateView(),
-    });
   }
 
   testPatchNativeSearch() {
     const plugin = this;
+    const trap = {
+      registerView(old: any) {
+        return function (
+          type: string,
+          viewCreator: ViewCreator,
+          ...args: unknown[]
+        ) {
+          plugin.app.workspace.trigger("view-registered", type, viewCreator);
+          console.log("view registered", type);
+          return old.call(this, type, viewCreator, ...args);
+        };
+      },
+    };
     this.register(
       // @ts-ignore
-      patch.around(this.app.viewRegistry.constructor.prototype, {
-        registerView(old: any) {
-          return function (
-            type: string,
-            viewCreator: ViewCreator,
-            ...args: unknown[]
-          ) {
-            plugin.app.workspace.trigger("view-registered", type, viewCreator);
-            console.log("view registered", type);
-            return old.call(this, type, viewCreator, ...args);
-          };
-        },
-      })
+      patch.around(this.app.viewRegistry.constructor.prototype, trap)
     );
 
     if (!this.app.workspace.layoutReady) {
@@ -101,49 +97,30 @@ export default class BetterBacklinksPlugin extends Plugin {
 
   patchSearchView(searchView: any) {
     const plugin = this;
-    this.register(
-      patch.around(searchView.constructor.prototype, {
-        addChild(old: any) {
-          return function (child: any, ...args: any[]) {
-            const dom = child.dom;
-            if (!dom) {
-              return;
-            }
-            const SearchResult = dom.constructor;
-            patch.around(SearchResult.prototype, {
-              addResult(old: any) {
-                return function (...args: any[]) {
-                  const result = old.call(this, ...args);
-                  console.log("patched addResult", { args, result });
-                  const SearchResultItem = result.constructor;
-                  plugin.patchSearchResultItem(SearchResultItem);
-                  return result;
-                };
-              },
-            });
-            return old.call(this, child, ...args);
-          };
-        },
-      })
-    );
-  }
-
-  getPosForMatch(content: string, startIndex: number, endIndex: number) {
-    const startLine = content.substring(0, startIndex).split("\n").length - 1;
-    const endLine = content.substring(0, endIndex).split("\n").length - 1;
-
-    const startLinePos = content.substring(0, startIndex).lastIndexOf("\n") + 1;
-    const startCol = content.substring(startLinePos, startIndex).length;
-
-    const endLinePos = content.substring(0, endIndex).lastIndexOf("\n") + 1;
-    const endCol = content.substring(endLinePos, endIndex).length;
-
-    return {
-      position: {
-        start: { line: startLine, col: startCol, offset: startIndex },
-        end: { line: endLine, col: endCol, offset: endIndex },
+    const trap = {
+      addChild(old: any) {
+        return function (child: any, ...args: any[]) {
+          const dom = child.dom;
+          if (!dom) {
+            return;
+          }
+          const SearchResult = dom.constructor;
+          patch.around(SearchResult.prototype, {
+            addResult(old: any) {
+              return function (...args: any[]) {
+                const result = old.call(this, ...args);
+                console.log("patched addResult", { args, result });
+                const SearchResultItem = result.constructor;
+                plugin.patchSearchResultItem(SearchResultItem);
+                return result;
+              };
+            },
+          });
+          return old.call(this, child, ...args);
+        };
       },
     };
+    this.register(patch.around(searchView.constructor.prototype, trap));
   }
 
   mountContextTreeOnMatchEl(container: any, match: any, positions: any[]) {
@@ -213,7 +190,7 @@ export default class BetterBacklinksPlugin extends Plugin {
           const matchPositions = this.vChildren._children.map(
             // todo: works only for one match per block
             ({ content, matches: [[start, end]] }: any) =>
-              plugin.getPosForMatch(content, start, end)
+              createPositionFromOffsets(content, start, end)
           );
 
           const firstMatch = this.vChildren._children[0];
