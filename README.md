@@ -1,6 +1,6 @@
 > **Warning**
 > - The plugin is in early development, so it may be buggy
-> - It relies on internal APIs, so it may break after you update Obsidian
+> - It relies on an internal API, so it may break after you update Obsidian
 >
 > I encourage you to create issues if you noticed anything wrong: https://github.com/ivan-lednev/better-backlinks/issues
 
