@@ -7,12 +7,8 @@ import {
   ViewCreator,
   WorkspaceLeaf,
 } from "obsidian";
-import { BetterBacklinksView } from "./sidebar";
 import { BetterBacklinksSettingTab } from "./setting-tab";
 import * as patch from "monkey-around";
-import { mountContextTree } from "./ui/mount-context-tree";
-import { EmbeddedBacklinksComponent } from "./embedded-backlinks-component";
-import { getHeadingBreadcrumbs } from "./metadata-cache-util/heading";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import { createContextTree } from "./context-tree/create/create-context-tree";
 
@@ -34,35 +30,7 @@ export default class BetterBacklinksPlugin extends Plugin {
 
     this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
 
-    this.registerView(
-      BetterBacklinksView.VIEW_TYPE,
-      (leaf) => new BetterBacklinksView(leaf, this.app.workspace, this)
-    );
-
-    this.registerEvent(
-      this.app.workspace.on("active-leaf-change", async () => {
-        const activeMarkdownView =
-          this.app.workspace.getActiveViewOfType(MarkdownView);
-
-        if (!activeMarkdownView) {
-          return;
-        }
-
-        this.app.workspace
-          .getLeavesOfType(BetterBacklinksView.VIEW_TYPE)
-          .forEach(({ view }) => {
-            if (view instanceof BetterBacklinksView) {
-              view.updateView(activeMarkdownView.file.path);
-            }
-          });
-      })
-    );
-
     this.testPatchNativeSearch();
-
-    const plugin = this;
-    // @ts-ignore
-    window.MarkdownRenderer = MarkdownRenderer;
 
     this.register(
       patch.around(Component.prototype, {
@@ -129,31 +97,6 @@ export default class BetterBacklinksPlugin extends Plugin {
         }
       );
     }
-
-    // this.register(
-    //   patch.around(Component.prototype, {
-    //     addChild(old: any) {
-    //       return function (child: unknown, ...args: any[]) {
-    //         if (
-    //           child instanceof Component &&
-    //           child.hasOwnProperty("backlinkDom") &&
-    //           this.getViewType() === "markdown"
-    //         ) {
-    //           this.backlinksEl.empty();
-    //           child.unload();
-    //
-    //           return new EmbeddedBacklinksComponent(
-    //             plugin.app,
-    //             plugin,
-    //             this.backlinksEl
-    //           );
-    //         } else {
-    //           return old.call(this, child, ...args);
-    //         }
-    //       };
-    //     },
-    //   })
-    // );
   }
 
   patchSearchView(searchView: any) {
@@ -208,18 +151,9 @@ export default class BetterBacklinksPlugin extends Plugin {
       return;
     }
 
-    try {
-      this.wrappedMatches.add(match);
-    } catch (e) {
-      console.error(`Error on ${match}. ${e}`);
-    }
+    this.wrappedMatches.add(match);
 
-    // todo: there can be more matches
-    const {
-      cache,
-      content,
-      matches: [[start, end]],
-    } = match;
+    const { cache, content } = match;
     const { file } = container;
 
     const contextTree = createContextTree({
@@ -229,9 +163,6 @@ export default class BetterBacklinksPlugin extends Plugin {
       filePath: file.path,
       ...cache,
     });
-
-    // todo: why is it rendering so often?
-    console.log(contextTree);
 
     const mountPoint = createDiv();
 
@@ -300,19 +231,6 @@ export default class BetterBacklinksPlugin extends Plugin {
   }
 
   onunload() {}
-
-  async activateView() {
-    this.app.workspace.detachLeavesOfType(BetterBacklinksView.VIEW_TYPE);
-
-    await this.app.workspace.getRightLeaf(false).setViewState({
-      type: BetterBacklinksView.VIEW_TYPE,
-      active: true,
-    });
-
-    this.app.workspace.revealLeaf(
-      this.app.workspace.getLeavesOfType(BetterBacklinksView.VIEW_TYPE)[0]
-    );
-  }
 
   async loadSettings() {
     this.settings = Object.assign({}, defaultSettings, await this.loadData());
