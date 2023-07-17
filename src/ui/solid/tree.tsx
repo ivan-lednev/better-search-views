@@ -25,8 +25,6 @@ interface TreeProps {
 }
 
 export function Tree(props: TreeProps) {
-  const [collapseResults, setCollapseResults] = createSignal(false);
-
   const collapsedTrees = () =>
     props.fileContextTrees.map((tree) =>
       produce(tree, (draft) => {
@@ -37,7 +35,7 @@ export function Tree(props: TreeProps) {
   return (
     <For each={collapsedTrees()}>
       {(tree) => (
-        <Branch contextTree={tree} initialCollapseResults={collapseResults()} />
+        <Branch contextTree={tree} />
       )}
     </For>
   );

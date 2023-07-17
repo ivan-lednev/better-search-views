@@ -7,15 +7,12 @@ import { usePluginContext } from "./plugin-context";
 
 interface BranchProps {
   contextTree?: AnyTree;
-  initialCollapseResults: boolean;
   type?: "list" | "heading";
 }
 
 export function Branch(props: BranchProps) {
   const { handleClick, handleMouseover } = usePluginContext();
-  const [childrenShown, setChildrenShown] = createSignal(
-    !props.initialCollapseResults
-  );
+  const [childrenShown, setChildrenShown] = createSignal(true);
 
   const breadcrumbs = () =>
     props.contextTree.breadcrumbs

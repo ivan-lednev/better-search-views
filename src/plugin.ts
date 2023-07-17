@@ -269,7 +269,11 @@ export default class BetterBacklinksPlugin extends Plugin {
         return function (...args: any[]) {
           const result = old.call(this, ...args);
 
-          if (plugin.wrappedFileMatches.has(this)) {
+          if (
+            plugin.wrappedFileMatches.has(this) ||
+            !this.vChildren._children ||
+            this.vChildren._children.length === 0
+          ) {
             return result;
           }
 
@@ -281,14 +285,11 @@ export default class BetterBacklinksPlugin extends Plugin {
               plugin.getPosForMatch(content, start, end)
           );
 
-          // not sure why this is sometimes undefined (maybe for virtual values?)
           const firstMatch = this.vChildren._children[0];
-          if (firstMatch) {
-            plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions);
+          plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions);
 
-            // we already mounted the whole thing to the first child, so discard the rest
-            this.vChildren._children = this.vChildren._children.slice(0, 1);
-          }
+          // we already mounted the whole thing to the first child, so discard the rest
+          this.vChildren._children = this.vChildren._children.slice(0, 1);
 
           return result;
         };

@@ -148,7 +148,7 @@ export function createContextTree({
         cache: sectionCache,
         text: getTextAtPosition(fileContents, sectionCache.position),
         filePath,
-        matchPosition: link
+        match: link
       });
     }
   }

@@ -39,7 +39,7 @@ export function PluginContextProvider(props: PluginContextProps) {
       return;
     }
 
-    // todo: fix this crap
+    // todo: fix this
     // todo: extend interface
     const hoverMetaKeyRequired =
       // @ts-ignore

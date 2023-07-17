@@ -21,7 +21,7 @@ export interface SectionWithMatch {
   text: string;
   cache: SectionCache;
   filePath: string;
-  matchPosition?: { position: Pos }
+  match?: { position: Pos }
 }
 
 export interface WithListChildren {

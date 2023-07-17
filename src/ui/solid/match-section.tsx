@@ -19,14 +19,16 @@ export function MatchSection(props: MatchSectionProps) {
             const line =
               props.sectionsWithMatches[index()].cache.position.start.line;
 
+            const textWithHighlight = `<span class="search-result-file-matched-text">${section.text}</span>`;
+
             return (
               <div
                 class="search-result-file-match better-backlinks-file-match"
                 ref={async (el) =>
                   await MarkdownRenderer.renderMarkdown(
-                    section.text,
+                    textWithHighlight,
                     el,
-                    "/",
+                    filePath,
                     plugin
                   )
                 }
