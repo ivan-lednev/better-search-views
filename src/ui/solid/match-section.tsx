@@ -22,14 +22,21 @@ export function MatchSection(props: MatchSectionProps) {
             return (
               <div
                 class="search-result-file-match better-backlinks-file-match"
-                ref={async (el) =>
+                ref={async (el) => {
                   await MarkdownRenderer.renderMarkdown(
                     section.text,
                     el,
                     filePath,
                     plugin
-                  )
-                }
+                  );
+
+                  // if (el.innerHTML.includes("target")) {
+                  //   el.innerHTML = el.innerHTML.replace(
+                  //     "target",
+                  //     `<span class="search-result-file-matched-text">target</span>`
+                  //   );
+                  // }
+                }}
                 onClick={async () => {
                   await handleClick(filePath, line);
                 }}

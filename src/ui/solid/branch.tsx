@@ -4,6 +4,7 @@ import { Title } from "./title";
 import { AnyTree } from "./tree";
 import { MatchSection } from "./match-section";
 import { usePluginContext } from "./plugin-context";
+import { CircleIcon } from "./icons/circle-icon";
 
 interface BranchProps {
   contextTree?: AnyTree;
@@ -55,9 +56,10 @@ export function Branch(props: BranchProps) {
               class={`tree-item-icon collapse-icon ${
                 childrenShown() ? "" : "is-collapsed"
               }`}
-              onClick={() => setChildrenShown(!childrenShown())}
+              // onClick={() => setChildrenShown(!childrenShown())}
             >
-              <CollapseIcon />
+              {/*<CollapseIcon />*/}
+              <CircleIcon />
             </div>
             <div
               class="tree-item-inner"

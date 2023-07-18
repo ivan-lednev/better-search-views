@@ -1,4 +1,4 @@
-export function HeadingIcon() {
+export function CircleIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,11 +10,11 @@ export function HeadingIcon() {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="better-context-icon lucide lucide-heading"
+      class="better-context-icon lucide lucide-arrow-right-circle"
     >
-      <path d="M6 12h12" />
-      <path d="M6 20V4" />
-      <path d="M18 20V4" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12h8" />
+      <path d="m12 16 4-4-4-4" />
     </svg>
   );
 }
