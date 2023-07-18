@@ -135,15 +135,16 @@ export function createContextTree({
         sections
       );
 
-      // todo: highlighting doesn't make sense here
-      context.sectionsWithMatches.push({
-        cache: firstSectionUnderHeading,
-        text: getTextAtPosition(
-          fileContents,
-          firstSectionUnderHeading.position
-        ),
-        filePath,
-      });
+      if (firstSectionUnderHeading) {
+        context.sectionsWithMatches.push({
+          cache: firstSectionUnderHeading,
+          text: getTextAtPosition(
+            fileContents,
+            firstSectionUnderHeading.position
+          ),
+          filePath,
+        });
+      }
     } else {
       if (!sectionCache) {
         throw new Error(`No section cache found in ${filePath}`);
