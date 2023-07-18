@@ -1,6 +1,6 @@
-.better-backlinks-file-match > * {
-  margin-top: 0;
-  margin-bottom: 0;
+.markdown-rendered .better-backlinks-file-match > *, .better-backlinks-file-match > * {
+  margin-block-start: 0;
+  margin-block-end: 0;
   white-space: normal;
 }
 
