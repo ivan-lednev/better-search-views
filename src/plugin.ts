@@ -24,6 +24,7 @@ export default class BetterBacklinksPlugin extends Plugin {
   wrappedMatches = new WeakSet();
   wrappedFileMatches = new WeakSet();
   currentNotice: Notice;
+  searchResultItemPatched = false;
 
   async onload() {
     await this.loadSettings();
@@ -75,9 +76,11 @@ export default class BetterBacklinksPlugin extends Plugin {
       addChild(old: any) {
         return function (child: any, ...args: any[]) {
           const dom = child.dom;
-          if (!dom) {
+          if (!dom || plugin.searchResultItemPatched) {
             return;
           }
+
+          plugin.searchResultItemPatched = true;
           const SearchResult = dom.constructor;
           patch.around(SearchResult.prototype, {
             addResult(old: any) {
