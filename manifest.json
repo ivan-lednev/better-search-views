@@ -1,11 +1,11 @@
 {
-	"id": "better-backlinks",
-	"name": "Better backlinks",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+  "id": "better-search-views",
+  "name": "Better Search Views",
+  "version": "0.0.0",
+  "minAppVersion": "0.16.0",
+  "description": "Outliner-like breadcrumb trees for search, backlinks and embedded queries ",
+  "author": "ivan-lednev",
+  "authorUrl": "https://github.com/ivan-lednev",
+  "fundingUrl": "https://www.buymeacoffee.com/machineelf",
+  "isDesktopOnly": false
 }
