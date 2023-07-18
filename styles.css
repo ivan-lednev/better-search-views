@@ -1,7 +1,13 @@
-.markdown-rendered .better-backlinks-file-match > *, .better-backlinks-file-match > * {
+/* TODO: blockquotes need a better fix */
+.markdown-rendered .better-backlinks-file-match > *, .better-backlinks-file-match > *, .better-backlinks-file-match > blockquote > p {
   margin-block-start: 0;
   margin-block-end: 0;
   white-space: normal;
+}
+
+.better-backlinks-file-match > blockquote {
+  margin-inline-start: 0;
+  margin-inline-end: 0;
 }
 
 .better-backlinks-file-match ul {
@@ -43,7 +49,9 @@
 
 .better-backlinks-breadcrumb-container {
   display: flex;
+  align-items: flex-start;
   gap: 0.5em;
+  color: var(--text-muted);
 }
 
 .better-search-wrapper {
@@ -86,9 +94,34 @@
   flex-direction: column;
   gap: 2px;
   flex-grow: 1;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: var(--radius-s);
+  /*box-shadow: 0 0 0 1px var(--background-modifier-border);*/
+}
+
+.better-backlinks-ref-item-container blockquote {
+  padding-left: 10px;
+  border-left: var(--blockquote-border-thickness) solid var(--blockquote-border-color)
+}
+
+.better-backlinks-ref-item-container .tree-item-inner:hover {
+  background-color: var(--nav-item-background-hover);
+}
+
+.better-backlinks-ref-item-container .search-result-file-title {
+  /* TODO: this is still hardcoded */
+  padding-left: calc(20px + var(--nav-indentation-guide-width));
+  padding-right: 0;
+}
+
+body:not(.is-grabbing) .better-backlinks-ref-item-container .tree-item-self.search-result-file-title:hover {
+  background-color: var(--titlebar-background);
 }
 
 .better-backlinks-ref-item-container .better-backlinks-breadcrumb-container {
+  padding-left: 4px;
+  padding-right: 4px;
   flex-grow: 1;
 }
 
@@ -100,4 +133,10 @@
 .better-backlinks-breadcrumb-token {
   display: flex;
   align-items: center;
+}
+
+.better-backlinks-ref-item-container .collapse-icon {
+  padding-top: 4px;
+  display: flex;
+  align-items: flex-start;
 }
