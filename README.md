@@ -11,7 +11,7 @@
 ## What it does
 
 The plugin enhances native search views to create an outliner-like context around every match:
-![image](https://github.com/ivan-lednev/better-backlinks/assets/41428836/8c95ea25-f350-48a2-9272-4c9a883a2b4c)
+![image](https://github.com/ivan-lednev/better-backlinks/assets/41428836/4da817f0-fb0e-4ab2-a0a9-0b8763d69fb8)
 
 - **It patches native search, backlinks view, embedded backlinks and embedded queries**
 - It renders markdown in the match to HTML
