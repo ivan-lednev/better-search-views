@@ -28,9 +28,10 @@
   border-right: var(--indentation-guide-width) solid var(--indentation-guide-color);
 }
 
+/*.embedded-backlinks .backlink-pane .tree-item-self*/
 .better-backlinks-breadcrumbs {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
@@ -53,7 +54,7 @@
   border-bottom: 1px solid var(--background-modifier-border)
 }
 
-.search-result-file-matches {
+.search-result-file-matches:has(.better-backlinks-ref-item-container) {
   font-size: var(--font-ui-smaller);
   line-height: var(--line-height-tight);
   background-color: revert;
@@ -63,13 +64,13 @@
   color: var(--text-muted);
 }
 
-.tree-item.search-result > .search-result-file-matches {
+.tree-item.search-result > .search-result-file-matches:has(.better-backlinks-ref-item-container) {
   box-shadow: none;
   /* Fix box shadow in child match boxes */
   padding-right: 1px;
 }
 
-.better-backlinks-file-match {
+.search-result-file-matches:has(.better-backlinks-ref-item-container) .better-backlinks-file-match {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
   background-color: var(--search-result-background);
 }

@@ -1,9 +1,7 @@
 import {
   Component,
-  MarkdownRenderer,
-  MarkdownView,
+  Notice,
   Plugin,
-  TFile,
   ViewCreator,
   WorkspaceLeaf,
 } from "obsidian";
@@ -25,11 +23,13 @@ export default class BetterBacklinksPlugin extends Plugin {
   settings: BetterBacklinksSettings;
   wrappedMatches = new WeakSet();
   wrappedFileMatches = new WeakSet();
+  currentNotice: Notice;
 
   async onload() {
     await this.loadSettings();
 
-    this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
+    // TODO: uncomment once we've got some options ready
+    // this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
 
     this.testPatchNativeSearch();
 
@@ -40,13 +40,10 @@ export default class BetterBacklinksPlugin extends Plugin {
             if (
               child.constructor.prototype.hasOwnProperty("renderContentMatches")
             ) {
-              console.log("patched SearchResultItemClass");
               const SearchResultItemClass = child.constructor;
               patch.around(SearchResultItemClass.prototype, {
                 renderContentMatches(old: any) {
-                  return function (...args: any[]) {
-                    console.log("patched SearchResultItemClass");
-                  };
+                  return function (...args: any[]) {};
                 },
               });
             } else {
@@ -68,7 +65,6 @@ export default class BetterBacklinksPlugin extends Plugin {
           ...args: unknown[]
         ) {
           plugin.app.workspace.trigger("view-registered", type, viewCreator);
-          console.log("view registered", type);
           return old.call(this, type, viewCreator, ...args);
         };
       },
@@ -84,7 +80,6 @@ export default class BetterBacklinksPlugin extends Plugin {
         "view-registered",
         (type: string, viewCreator: ViewCreator) => {
           if (type !== "search") return;
-          console.log("search registered");
           this.app.workspace.offref(eventRef);
           // @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
           let leaf = new WorkspaceLeaf(plugin.app);
@@ -109,7 +104,6 @@ export default class BetterBacklinksPlugin extends Plugin {
             addResult(old: any) {
               return function (...args: any[]) {
                 const result = old.call(this, ...args);
-                console.log("patched addResult", { args, result });
                 const SearchResultItem = result.constructor;
                 plugin.patchSearchResultItem(SearchResultItem);
                 return result;
@@ -148,7 +142,7 @@ export default class BetterBacklinksPlugin extends Plugin {
 
     const mountPoint = createDiv();
 
-    // todo: hack for file names
+    // todo: remove the hack for file names
     contextTree.text = "";
 
     renderContextTree({
@@ -178,32 +172,42 @@ export default class BetterBacklinksPlugin extends Plugin {
 
           plugin.wrappedFileMatches.add(this);
 
-          const matchPositions = this.vChildren._children.map(
-            // todo: works only for one match per block
-            ({ content, matches: [[start, end]] }: any) =>
-              createPositionFromOffsets(content, start, end)
-          );
+          try {
+            const matchPositions = this.vChildren._children.map(
+              // todo: works only for one match per block
+              ({ content, matches: [[start, end]] }: any) =>
+                createPositionFromOffsets(content, start, end)
+            );
 
-          const highlights = this.vChildren._children.map(
-            ({ content, matches: [[start, end]] }) => {
-              return content.substring(start, end);
-            }
-          );
+            const highlights = this.vChildren._children.map(
+              ({ content, matches: [[start, end]] }) => {
+                return content.substring(start, end);
+              }
+            );
 
-          const normalizedHighlights = [
-            ...new Set(highlights.map((h: string) => h.toLowerCase())),
-          ];
+            const normalizedHighlights = [
+              ...new Set(highlights.map((h: string) => h.toLowerCase())),
+            ];
 
-          const firstMatch = this.vChildren._children[0];
-          plugin.mountContextTreeOnMatchEl(
-            this,
-            firstMatch,
-            matchPositions,
-            normalizedHighlights
-          );
+            const firstMatch = this.vChildren._children[0];
+            plugin.mountContextTreeOnMatchEl(
+              this,
+              firstMatch,
+              matchPositions,
+              normalizedHighlights
+            );
 
-          // we already mounted the whole thing to the first child, so discard the rest
-          this.vChildren._children = this.vChildren._children.slice(0, 1);
+            // we already mounted the whole thing to the first child, so discard the rest
+            this.vChildren._children = this.vChildren._children.slice(0, 1);
+          } catch (e) {
+            const message = `Error while mounting Better Search Views tree for file path: ${this.file.path}`;
+            plugin.currentNotice?.hide();
+            plugin.currentNotice = new Notice(
+              `${message}. Please report an issue with the details from the console attached.`,
+              10000
+            );
+            console.error(`${message}. Reason:`, e);
+          }
 
           return result;
         };
