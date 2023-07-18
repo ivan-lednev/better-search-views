@@ -61,7 +61,12 @@
   overflow: hidden;
   margin: var(--size-4-1) 0 var(--size-4-2);
   color: var(--text-muted);
-  box-shadow: initial;
+}
+
+.tree-item.search-result > .search-result-file-matches {
+  box-shadow: none;
+  /* Fix box shadow in child match boxes */
+  padding-right: 1px;
 }
 
 .better-backlinks-file-match {
