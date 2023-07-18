@@ -31,31 +31,10 @@ export default class BetterBacklinksPlugin extends Plugin {
     // TODO: uncomment once we've got some options ready
     // this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
 
-    this.testPatchNativeSearch();
-
-    this.register(
-      patch.around(Component.prototype, {
-        addChild(old: any) {
-          return function (child: unknown, ...args: any[]) {
-            if (
-              child.constructor.prototype.hasOwnProperty("renderContentMatches")
-            ) {
-              const SearchResultItemClass = child.constructor;
-              patch.around(SearchResultItemClass.prototype, {
-                renderContentMatches(old: any) {
-                  return function (...args: any[]) {};
-                },
-              });
-            } else {
-              return old.call(this, child, ...args);
-            }
-          };
-        },
-      })
-    );
+    this.patchViewRegistry();
   }
 
-  testPatchNativeSearch() {
+  patchViewRegistry() {
     const plugin = this;
     const trap = {
       registerView(old: any) {
@@ -74,20 +53,20 @@ export default class BetterBacklinksPlugin extends Plugin {
       patch.around(this.app.viewRegistry.constructor.prototype, trap)
     );
 
-    if (!this.app.workspace.layoutReady) {
-      let eventRef = this.app.workspace.on(
-        // @ts-ignore
-        "view-registered",
-        (type: string, viewCreator: ViewCreator) => {
-          if (type !== "search") return;
-          this.app.workspace.offref(eventRef);
-          // @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
-          let leaf = new WorkspaceLeaf(plugin.app);
-          let searchView = viewCreator(leaf);
-          plugin.patchSearchView(searchView);
+    let eventRef = this.app.workspace.on(
+      // @ts-ignore
+      "view-registered",
+      (type: string, viewCreator: ViewCreator) => {
+        if (type !== "search") {
+          return;
         }
-      );
-    }
+        this.app.workspace.offref(eventRef);
+        // @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
+        let leaf = new WorkspaceLeaf(plugin.app);
+        let searchView = viewCreator(leaf);
+        plugin.patchSearchView(searchView);
+      }
+    );
   }
 
   patchSearchView(searchView: any) {
@@ -115,44 +94,6 @@ export default class BetterBacklinksPlugin extends Plugin {
       },
     };
     this.register(patch.around(searchView.constructor.prototype, trap));
-  }
-
-  mountContextTreeOnMatchEl(
-    container: any,
-    match: any,
-    positions: any[],
-    highlights: string[]
-  ) {
-    if (this.wrappedMatches.has(match)) {
-      return;
-    }
-
-    this.wrappedMatches.add(match);
-
-    const { cache, content } = match;
-    const { file } = container;
-
-    const contextTree = createContextTree({
-      positions,
-      fileContents: content,
-      stat: file.stat,
-      filePath: file.path,
-      ...cache,
-    });
-
-    const mountPoint = createDiv();
-
-    // todo: remove the hack for file names
-    contextTree.text = "";
-
-    renderContextTree({
-      highlights,
-      contextTrees: [contextTree],
-      el: mountPoint,
-      plugin: this,
-    });
-
-    match.el = mountPoint;
   }
 
   patchSearchResultItem(SearchResultItem: any) {
@@ -215,6 +156,44 @@ export default class BetterBacklinksPlugin extends Plugin {
     };
 
     this.register(patch.around(SearchResultItem.prototype, trap));
+  }
+
+  mountContextTreeOnMatchEl(
+    container: any,
+    match: any,
+    positions: any[],
+    highlights: string[]
+  ) {
+    if (this.wrappedMatches.has(match)) {
+      return;
+    }
+
+    this.wrappedMatches.add(match);
+
+    const { cache, content } = match;
+    const { file } = container;
+
+    const contextTree = createContextTree({
+      positions,
+      fileContents: content,
+      stat: file.stat,
+      filePath: file.path,
+      ...cache,
+    });
+
+    const mountPoint = createDiv();
+
+    // todo: remove the hack for file names
+    contextTree.text = "";
+
+    renderContextTree({
+      highlights,
+      contextTrees: [contextTree],
+      el: mountPoint,
+      plugin: this,
+    });
+
+    match.el = mountPoint;
   }
 
   onunload() {}
