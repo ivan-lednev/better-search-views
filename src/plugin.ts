@@ -25,6 +25,7 @@ export default class BetterBacklinksPlugin extends Plugin {
   wrappedFileMatches = new WeakSet();
   currentNotice: Notice;
   searchResultItemPatched = false;
+renderContentMatchesPatched = false;
 
   async onload() {
     await this.loadSettings();
@@ -71,12 +72,16 @@ export default class BetterBacklinksPlugin extends Plugin {
   }
 
   patchSearchView(searchView: any) {
+    if (this.searchResultItemPatched) {
+      return;
+    }
     const plugin = this;
+
     const trap = {
       addChild(old: any) {
         return function (child: any, ...args: any[]) {
           const dom = child.dom;
-          if (!dom || plugin.searchResultItemPatched) {
+          if (!dom) {
             return;
           }
 
@@ -96,13 +101,19 @@ export default class BetterBacklinksPlugin extends Plugin {
         };
       },
     };
+
     this.register(patch.around(searchView.constructor.prototype, trap));
   }
 
   patchSearchResultItem(SearchResultItem: any) {
+    if (this.renderContentMatchesPatched) {
+      return
+    }
+
     const plugin = this;
     const trap = {
       renderContentMatches(old: any) {
+        plugin.renderContentMatchesPatched = true
         return function (...args: any[]) {
           const result = old.call(this, ...args);
 
