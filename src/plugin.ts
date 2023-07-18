@@ -123,7 +123,12 @@ export default class BetterBacklinksPlugin extends Plugin {
     this.register(patch.around(searchView.constructor.prototype, trap));
   }
 
-  mountContextTreeOnMatchEl(container: any, match: any, positions: any[], highlights: string[]) {
+  mountContextTreeOnMatchEl(
+    container: any,
+    match: any,
+    positions: any[],
+    highlights: string[]
+  ) {
     if (this.wrappedMatches.has(match)) {
       return;
     }
@@ -179,12 +184,23 @@ export default class BetterBacklinksPlugin extends Plugin {
               createPositionFromOffsets(content, start, end)
           );
 
-          const highlightedTerms = this.vChildren._children.map(({ content, matches: [[start, end]]}) => {
-            return content.substring(start, end)
-          })
+          const highlights = this.vChildren._children.map(
+            ({ content, matches: [[start, end]] }) => {
+              return content.substring(start, end);
+            }
+          );
+
+          const normalizedHighlights = [
+            ...new Set(highlights.map((h: string) => h.toLowerCase())),
+          ];
 
           const firstMatch = this.vChildren._children[0];
-          plugin.mountContextTreeOnMatchEl(this, firstMatch, matchPositions, highlightedTerms);
+          plugin.mountContextTreeOnMatchEl(
+            this,
+            firstMatch,
+            matchPositions,
+            normalizedHighlights
+          );
 
           // we already mounted the whole thing to the first child, so discard the rest
           this.vChildren._children = this.vChildren._children.slice(0, 1);

@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from "solid-js";
+import {createEffect, createSignal, For, Show} from "solid-js";
 import { CollapseIcon } from "./icons/collapse-icon";
 import { Title } from "./title";
 import { AnyTree } from "./tree";

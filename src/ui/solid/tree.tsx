@@ -35,19 +35,14 @@ export function Tree(props: TreeProps) {
     );
 
   let markContextRef: HTMLDivElement;
-  const mark = new Mark(markContextRef);
 
   createEffect(() => {
-    // todo: don't dedupe them here
-    // new Mark(markContextRef).mark([...new Set(props.highlights)], {
-    //   element: "span",
-    //   className: "search-result-file-matched-text",
-    //   separateWordSearch: false,
-    //   diacritics: false,
-    // });
-
-    // todo: why does it work?
-    mark.unmark({ done: () => mark.mark([...new Set(props.highlights)]) });
+    new Mark(markContextRef).mark(props.highlights, {
+      element: "span",
+      className: "search-result-file-matched-text",
+      separateWordSearch: false,
+      diacritics: false,
+    });
   });
 
   return (

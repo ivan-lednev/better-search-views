@@ -153,16 +153,9 @@ export function createContextTree({
         fileContents,
         sectionCache.position
       );
-      const textWithHighlightedMatch =
-        highlightAtPositionWithRecalculatingOffsets(
-          link.position,
-          sectionCache?.position,
-          sectionText
-        );
-
       context.sectionsWithMatches.push({
         cache: sectionCache,
-        text: textWithHighlightedMatch,
+        text: sectionText,
         filePath,
       });
     }
