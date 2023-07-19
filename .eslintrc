@@ -30,7 +30,7 @@
       "error",
       {
         "allowedNames": [
-          "plugin"
+          "patcher"
         ]
       }
     ]
