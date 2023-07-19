@@ -16,7 +16,7 @@ export class Patcher {
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
 
-  patchSearchComponent() {
+  patchSearchView() {
     const patcher = this;
     this.plugin.register(
       around(Component.prototype, {

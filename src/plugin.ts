@@ -5,6 +5,6 @@ export default class BetterBacklinksPlugin extends Plugin {
   async onload() {
     const patcher = new Patcher(this);
     // patcher.patchViewRegistry();
-    patcher.patchSearchComponent();
+    patcher.patchSearchView();
   }
 }
