@@ -1,5 +1,5 @@
-import { App, Notice, Plugin, PluginManifest } from "obsidian";
-import { Patcher } from "./patch";
+import { Plugin } from "obsidian";
+import { Patcher } from "./patcher";
 
 export default class BetterBacklinksPlugin extends Plugin {
   async onload() {
