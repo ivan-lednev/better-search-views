@@ -21,51 +21,55 @@ export function Title(props: TitleProps) {
   // todo: clean this up. It can be shorter
   // todo: remove duplication
   return (
-    <Index each={props.breadcrumbs}>
-      {(breadcrumb, i) => (
-        <Switch
-          fallback={
-            <div onClick={() => handleClick(props.contextTree.filePath)}>
-              {breadcrumb().replace(/\.md$/, "")}
-            </div>
-          }
-        >
-          <Match when={props.type === "list"}>
-            <div
-              class="better-backlinks-breadcrumb-container"
-              onClick={async () =>
-                handleClick(
-                  props.contextTree.filePath,
-                  // @ts-ignore
-                  props.contextTree.listItemCache.position.start.line
-                )
-              }
-            >
-              <div class="better-backlinks-breadcrumb-token">
-                {i === 0 ? <ListIcon /> : <ArrowRightIcon />}
+    <div class='better-search-views-titles-container'>
+      <Index each={props.breadcrumbs}>
+        {(breadcrumb, i) => (
+          <Switch
+            fallback={
+              <div>Unknown breadcrumb type: {JSON.stringify(breadcrumb)}</div>
+            }
+          >
+            <Match when={props.type === "list"}>
+              <div class="tree-item-inner">
+                <div
+                  class="better-backlinks-breadcrumb-container"
+                  onClick={async () =>
+                    handleClick(
+                      props.contextTree.filePath,
+                      // @ts-ignore
+                      props.contextTree.listItemCache.position.start.line
+                    )
+                  }
+                >
+                  <div class="better-backlinks-breadcrumb-token">
+                    {i === 0 ? <ListIcon /> : <ArrowRightIcon />}
+                  </div>
+                  <div>{removeListToken(breadcrumb())}</div>
+                </div>
               </div>
-              <div>{removeListToken(breadcrumb())}</div>
-            </div>
-          </Match>
-          <Match when={props.type === "heading"}>
-            <div
-              class="better-backlinks-breadcrumb-container"
-              onClick={async () =>
-                await handleClick(
-                  props.contextTree.filePath,
-                  // @ts-ignore
-                  props.contextTree.headingCache.position.start.line
-                )
-              }
-            >
-              <div class="better-backlinks-breadcrumb-token">
-                {i === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
+            </Match>
+            <Match when={props.type === "heading"}>
+              <div class="tree-item-inner">
+                <div
+                  class="better-backlinks-breadcrumb-container"
+                  onClick={async () =>
+                    await handleClick(
+                      props.contextTree.filePath,
+                      // @ts-ignore
+                      props.contextTree.headingCache.position.start.line
+                    )
+                  }
+                >
+                  <div class="better-backlinks-breadcrumb-token">
+                    {i === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
+                  </div>
+                  <div>{breadcrumb()}</div>
+                </div>
               </div>
-              <div>{breadcrumb()}</div>
-            </div>
-          </Match>
-        </Switch>
-      )}
-    </Index>
+            </Match>
+          </Switch>
+        )}
+      </Index>
+    </div>
   );
 }

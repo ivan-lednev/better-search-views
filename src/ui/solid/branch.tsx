@@ -61,18 +61,18 @@ export function Branch(props: BranchProps) {
               {/*<CollapseIcon />*/}
               <CircleIcon />
             </div>
-            <div
-              class="tree-item-inner"
-              onClick={handleTitleClick}
-              // @ts-ignore
-              onMouseOver={handleTitleMouseOver}
-            >
+            {/*<div*/}
+            {/*  class="tree-item-inner"*/}
+            {/*  onClick={handleTitleClick}*/}
+            {/*  // @ts-ignore*/}
+            {/*  onMouseOver={handleTitleMouseOver}*/}
+            {/*>*/}
               <Title
                 breadcrumbs={breadcrumbs()}
                 type={props.type}
                 contextTree={props.contextTree}
               />
-            </div>
+            {/*</div>*/}
           </div>
         </Show>
         <Show when={childrenShown()}>

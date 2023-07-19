@@ -140,3 +140,9 @@ body:not(.is-grabbing) .better-backlinks-ref-item-container .tree-item-self.sear
   display: flex;
   align-items: flex-start;
 }
+
+.better-search-views-titles-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
