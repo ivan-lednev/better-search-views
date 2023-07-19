@@ -1,9 +1,17 @@
-import { Component, Notice, ViewCreator, WorkspaceLeaf } from "obsidian";
+import {
+  Component,
+  Notice,
+  ViewCreator,
+  ViewRegistry,
+  WorkspaceLeaf,
+} from "obsidian";
 import * as patch from "monkey-around";
 import { createPositionFromOffsets } from "./metadata-cache-util/position";
 import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
+
+const errorTimeout = 10000;
 
 export class Patcher {
   private readonly wrappedMatches = new WeakSet();
@@ -19,7 +27,7 @@ export class Patcher {
     const { plugin } = this;
 
     const trap = {
-      registerView(old: any) {
+      registerView(old: ViewRegistry["registerView"]) {
         return function (
           type: string,
           viewCreator: ViewCreator,
@@ -31,21 +39,22 @@ export class Patcher {
             return;
           }
 
+          // TODO: figure out how to change/extend constructor signature with typescript
           // @ts-ignore
           const leaf = new WorkspaceLeaf(plugin.app);
           // We create a new view only to get to the SearchView class
-          const SearchView = viewCreator(leaf).constructor;
+          const SearchView = viewCreator(leaf).constructor as typeof Component;
           patcher.patchSearchView(SearchView);
         };
       },
     };
 
-    const ViewRegistry = plugin.app.viewRegistry.constructor;
+    const ViewRegistryClass = plugin.app.viewRegistry.constructor;
 
-    plugin.register(patch.around(ViewRegistry.prototype, trap));
+    plugin.register(patch.around(ViewRegistryClass.prototype, trap));
   }
 
-  patchSearchView(SearchView: any) {
+  patchSearchView(SearchViewClass: typeof Component) {
     if (this.searchResultItemPatched) {
       return;
     }
@@ -53,8 +62,8 @@ export class Patcher {
     const { plugin } = this;
 
     const trap = {
-      addChild(old: any) {
-        return function (child: any, ...args: any[]) {
+      addChild(old: Component["addChild"]) {
+        return function (child: unknown, ...args: unknown[]) {
           const dom = child.dom;
           if (!dom) {
             return;
@@ -70,16 +79,16 @@ export class Patcher {
       },
     };
 
-    plugin.register(patch.around(SearchView.prototype, trap));
+    plugin.register(patch.around(SearchViewClass.prototype, trap));
   }
 
-  patchSearchResult(SearchResult: any) {
+  patchSearchResult(SearchResultClass: unknown) {
     const patcher = this;
     const { plugin } = this;
 
     const trap = {
-      addResult(old: any) {
-        return function (...args: any[]) {
+      addResult(old: unknown) {
+        return function (...args: unknown[]) {
           const result = old.call(this, ...args);
           const SearchResultItem = result.constructor;
           patcher.patchSearchResultItem(SearchResultItem);
@@ -88,10 +97,10 @@ export class Patcher {
       },
     };
 
-    plugin.register(patch.around(SearchResult.prototype, trap));
+    plugin.register(patch.around(SearchResultClass.prototype, trap));
   }
 
-  patchSearchResultItem(SearchResultItem: any) {
+  patchSearchResultItem(SearchResultItemClass: any) {
     if (this.renderContentMatchesPatched) {
       return;
     }
@@ -101,10 +110,6 @@ export class Patcher {
     const trap = {
       renderContentMatches(old: any) {
         // todo: do this one level higher
-        console.log(
-          "is searchresultitem instanceof component",
-          this instanceof Component
-        );
         patcher.renderContentMatchesPatched = true;
         return function (...args: any[]) {
           const result = old.call(this, ...args);
@@ -147,13 +152,7 @@ export class Patcher {
             // we already mounted the whole thing to the first child, so discard the rest
             this.vChildren._children = this.vChildren._children.slice(0, 1);
           } catch (e) {
-            const message = `Error while mounting Better Search Views tree for file path: ${this.file.path}`;
-            patcher.currentNotice?.hide();
-            patcher.currentNotice = new Notice(
-              `${message}. Please report an issue with the details from the console attached.`,
-              10000
-            );
-            console.error(`${message}. Reason:`, e);
+            patcher.reportError(e, this.file.path);
           }
 
           return result;
@@ -161,7 +160,17 @@ export class Patcher {
       },
     };
 
-    plugin.register(patch.around(SearchResultItem.prototype, trap));
+    plugin.register(patch.around(SearchResultItemClass.prototype, trap));
+  }
+
+  reportError(error: Error, filePath: string) {
+    const message = `Error while mounting Better Search Views tree for file path: ${filePath}`;
+    this.currentNotice?.hide();
+    this.currentNotice = new Notice(
+      `${message}. Please report an issue with the details from the console attached.`,
+      errorTimeout
+    );
+    console.error(`${message}. Reason:`, e);
   }
 
   mountContextTreeOnMatchEl(
