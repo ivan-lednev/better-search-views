@@ -1,10 +1,4 @@
-import {
-  Component,
-  Notice,
-  ViewCreator,
-  ViewRegistry,
-  WorkspaceLeaf,
-} from "obsidian";
+import { Component, Notice } from "obsidian";
 import { around } from "monkey-around";
 import { createPositionFromOffsets } from "./metadata-cache-util/position";
 import { createContextTree } from "./context-tree/create/create-context-tree";
@@ -22,73 +16,41 @@ export class Patcher {
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
 
-  patchViewRegistry() {
+  patchSearchComponent() {
     const patcher = this;
-    const { plugin } = this;
-
-    plugin.register(
-      around(plugin.app.viewRegistry.constructor.prototype, {
-        registerView(old: ViewRegistry["registerView"]) {
-          return function (
-            type: string,
-            viewCreator: ViewCreator,
-            ...args: unknown[]
-          ) {
-            old.call(this, type, viewCreator, ...args);
-
-            if (type !== "search") {
-              return;
-            }
-
-            // TODO: figure out how to change/extend constructor signature with typescript
-            // @ts-ignore
-            const leaf = new WorkspaceLeaf(plugin.app);
-            // We create a new view only to get to the SearchView class
-            const dummyView = viewCreator(leaf);
-
-            patcher.patchSearchView(dummyView);
-          };
-        },
-      })
-    );
-  }
-
-  patchSearchView(searchView: Component) {
-    if (this.searchResultItemPatched) {
-      return;
-    }
-    const patcher = this;
-    const { plugin } = this;
-
-    plugin.register(
-      around(searchView.constructor.prototype, {
+    this.plugin.register(
+      around(Component.prototype, {
         addChild(old: Component["addChild"]) {
           return function (child: unknown, ...args: unknown[]) {
-            const dom = child.dom;
-            if (!dom) {
-              return;
+            const result = old.call(this, child, ...args);
+
+            const thisIsSearchView = this.hasOwnProperty("searchQuery");
+
+            if (thisIsSearchView && !patcher.searchResultItemPatched) {
+              patcher.patchSearchResultDom(child.dom);
+              patcher.searchResultItemPatched = true;
             }
 
-            patcher.patchSearchResult(dom);
-            patcher.searchResultItemPatched = true;
-
-            return old.call(this, child, ...args);
+            return result;
           };
         },
       })
     );
   }
 
-  patchSearchResult(searchResultDom: unknown) {
+  patchSearchResultDom(searchResultDom: unknown) {
     const patcher = this;
-    const { plugin } = this;
-
-    plugin.register(
+    this.plugin.register(
       around(searchResultDom.constructor.prototype, {
         addResult(old: unknown) {
           return function (...args: unknown[]) {
             const result = old.call(this, ...args);
-            patcher.patchSearchResultItem(result);
+
+            if (!patcher.renderContentMatchesPatched) {
+              patcher.patchSearchResultItem(result);
+              patcher.renderContentMatchesPatched = true;
+            }
+
             return result;
           };
         },
@@ -97,18 +59,11 @@ export class Patcher {
   }
 
   patchSearchResultItem(searchResultItem: unknown) {
-    if (this.renderContentMatchesPatched) {
-      return;
-    }
-
     const patcher = this;
-    const { plugin } = this;
-
-    plugin.register(
+    this.plugin.register(
       around(searchResultItem.constructor.prototype, {
         renderContentMatches(old: unknown) {
           // todo: do this one level higher
-          patcher.renderContentMatchesPatched = true;
 
           return function (...args: unknown[]) {
             const result = old.call(this, ...args);
