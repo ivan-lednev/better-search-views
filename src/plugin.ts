@@ -2,7 +2,9 @@ import {
   Component,
   Notice,
   Plugin,
+  View,
   ViewCreator,
+  ViewStateResult,
   WorkspaceLeaf,
 } from "obsidian";
 import { BetterBacklinksSettingTab } from "./setting-tab";
@@ -19,13 +21,21 @@ const defaultSettings: BetterBacklinksSettings = {
   mySetting: "default",
 };
 
+interface ViewRegistry {}
+
+declare module "obsidian" {
+  interface App {
+    viewRegistry: ViewRegistry;
+  }
+}
+
 export default class BetterBacklinksPlugin extends Plugin {
   settings: BetterBacklinksSettings;
   wrappedMatches = new WeakSet();
-  wrappedFileMatches = new WeakSet();
+  wrappedSearchResultItems = new WeakSet();
   currentNotice: Notice;
   searchResultItemPatched = false;
-renderContentMatchesPatched = false;
+  renderContentMatchesPatched = false;
 
   async onload() {
     await this.loadSettings();
@@ -33,9 +43,23 @@ renderContentMatchesPatched = false;
     // TODO: uncomment once we've got some options ready
     // this.addSettingTab(new BetterBacklinksSettingTab(this.app, this));
 
+    // TODO: no need to listen to anything, just pull the view out of thin air like so:
+    // this doesn't work, looks like plugins get loaded before any views are created
+    // // @ts-ignore
+    // const dummyLeaf = new WorkspaceLeaf(this.app);
+    // // @ts-ignore
+    // const searchViewCreator = app.viewRegistry.getViewCreatorByType("search");
+    // const dummySearchView = searchViewCreator(dummyLeaf);
+    // const SearchView = dummySearchView.constructor;
+    //
+    // this.patchSearchViewClass(SearchView);
+
     this.patchViewRegistry();
   }
 
+  /** Plugins get loaded before views are created, so we can't patch search view in Plugin.onload(), and this is a
+   *  workaround
+   */
   patchViewRegistry() {
     const plugin = this;
     const trap = {
@@ -51,11 +75,10 @@ renderContentMatchesPatched = false;
       },
     };
     this.register(
-      // @ts-ignore
       patch.around(this.app.viewRegistry.constructor.prototype, trap)
     );
 
-    let eventRef = this.app.workspace.on(
+    const eventRef = this.app.workspace.on(
       // @ts-ignore
       "view-registered",
       (type: string, viewCreator: ViewCreator) => {
@@ -63,15 +86,16 @@ renderContentMatchesPatched = false;
           return;
         }
         this.app.workspace.offref(eventRef);
-        // @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
-        let leaf = new WorkspaceLeaf(plugin.app);
-        let searchView = viewCreator(leaf);
-        plugin.patchSearchView(searchView);
+        // @ts-ignore
+        const leaf = new WorkspaceLeaf(plugin.app);
+        // We create a new view only to get to the SearchView class
+        const SearchView = viewCreator(leaf).constructor;
+        plugin.patchSearchViewClass(SearchView);
       }
     );
   }
 
-  patchSearchView(searchView: any) {
+  patchSearchViewClass(SearchView: any) {
     if (this.searchResultItemPatched) {
       return;
     }
@@ -92,7 +116,7 @@ renderContentMatchesPatched = false;
               return function (...args: any[]) {
                 const result = old.call(this, ...args);
                 const SearchResultItem = result.constructor;
-                plugin.patchSearchResultItem(SearchResultItem);
+                plugin.patchSearchResultItemClass(SearchResultItem);
                 return result;
               };
             },
@@ -102,30 +126,30 @@ renderContentMatchesPatched = false;
       },
     };
 
-    this.register(patch.around(searchView.constructor.prototype, trap));
+    this.register(patch.around(SearchView.prototype, trap));
   }
 
-  patchSearchResultItem(SearchResultItem: any) {
+  patchSearchResultItemClass(SearchResultItem: any) {
     if (this.renderContentMatchesPatched) {
-      return
+      return;
     }
 
     const plugin = this;
     const trap = {
       renderContentMatches(old: any) {
-        plugin.renderContentMatchesPatched = true
+        plugin.renderContentMatchesPatched = true;
         return function (...args: any[]) {
           const result = old.call(this, ...args);
 
           if (
-            plugin.wrappedFileMatches.has(this) ||
+            plugin.wrappedSearchResultItems.has(this) ||
             !this.vChildren._children ||
             this.vChildren._children.length === 0
           ) {
             return result;
           }
 
-          plugin.wrappedFileMatches.add(this);
+          plugin.wrappedSearchResultItems.add(this);
 
           try {
             const matchPositions = this.vChildren._children.map(
