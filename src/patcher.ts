@@ -1,10 +1,20 @@
 import { Component, Notice } from "obsidian";
 import { around } from "monkey-around";
-import { createPositionFromOffsets } from "./metadata-cache-util/position";
+import {
+  createPositionFromOffsets,
+  isSamePosition,
+} from "./metadata-cache-util/position";
 import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
+import {
+  FileContextTree,
+  HeadingContextTree,
+  ListContextTree,
+  SectionWithMatch,
+} from "./context-tree/types";
+import { produce } from "immer";
 
 const errorTimeout = 10000;
 
@@ -152,18 +162,69 @@ export class Patcher {
       ...cache,
     });
 
+    contextTree.text = "";
+
+    const dedupedTree = produce(contextTree, dedupeMatchesRecursively);
+
     const mountPoint = createDiv();
 
     // todo: remove the hack for file names
-    contextTree.text = "";
 
     renderContextTree({
       highlights,
-      contextTrees: [contextTree],
+      contextTrees: [dedupedTree],
       el: mountPoint,
       plugin: this.plugin,
     });
 
     match.el = mountPoint;
   }
+}
+
+function areMatchesInSameSection(a: SectionWithMatch, b: SectionWithMatch) {
+  return (
+    a.text === b.text && isSamePosition(a.cache.position, b.cache.position)
+  );
+}
+
+// todo: this is potentially slow
+function dedupe(matches: SectionWithMatch[]) {
+  return matches.filter(
+    (match: SectionWithMatch, index: number, array: SectionWithMatch[]) =>
+      index ===
+      array.findIndex((inner) => areMatchesInSameSection(inner, match))
+  );
+}
+
+// todo: no heading/list separation
+// todo: use generic recursive func for tree
+function dedupeMatchesRecursively(tree: FileContextTree) {
+  function recursiveHeadings(branch: HeadingContextTree): HeadingContextTree {
+    branch.sectionsWithMatches = dedupe(branch.sectionsWithMatches);
+
+    branch.childHeadings = branch.childHeadings.map((h) =>
+      recursiveHeadings(h)
+    );
+
+    return branch;
+  }
+
+  function recursiveLists(branch: ListContextTree): ListContextTree {
+    branch.sectionsWithMatches = dedupe(branch.sectionsWithMatches);
+
+    branch.childLists = branch.childLists.map((l) => recursiveLists(l));
+
+    return branch;
+  }
+
+  tree.sectionsWithMatches = dedupe(tree.sectionsWithMatches);
+
+  tree &&
+    (tree.childHeadings = tree?.childHeadings?.map((h) =>
+      recursiveHeadings(h)
+    ));
+
+  tree && (tree.childLists = tree?.childLists?.map((l) => recursiveLists(l)));
+
+  return tree;
 }

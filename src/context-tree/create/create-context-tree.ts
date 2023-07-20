@@ -4,6 +4,7 @@ import {
   FileContextTree,
   HeadingContextTree,
   ListContextTree,
+  SectionWithMatch,
 } from "../types";
 import {
   getHeadingBreadcrumbs,
@@ -21,7 +22,6 @@ import {
 } from "../../metadata-cache-util/section";
 import {
   getTextAtPosition,
-  highlightAtPositionWithRecalculatingOffsets,
   isSamePosition,
 } from "../../metadata-cache-util/position";
 import { formatListWithDescendants } from "../../metadata-cache-util/format";
@@ -35,6 +35,7 @@ export function createContextTree({
   headings = [],
   sections = [],
 }: createContextTreeProps) {
+  // todo: rename to positions
   const linksWithContext = positions.map((link) => {
     return {
       headingBreadcrumbs: getHeadingBreadcrumbs(link.position, headings),
