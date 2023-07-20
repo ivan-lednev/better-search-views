@@ -21,7 +21,7 @@ export function MatchSection(props: MatchSectionProps) {
 
             return (
               <div
-                class="search-result-file-match better-search-views-file-match markdown-preview-view"
+                class="search-result-file-match better-search-views-file-match markdown-preview-view markdown-rendered"
                 ref={async (el) => {
                   await MarkdownRenderer.renderMarkdown(
                     section.text,
