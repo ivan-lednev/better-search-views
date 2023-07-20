@@ -71,8 +71,11 @@
   background-color: revert;
   border-radius: var(--radius-s);
   overflow: hidden;
-  margin: var(--size-4-1) 0 var(--size-4-2);
   color: var(--text-muted);
+}
+
+.search-result-file-matches:has(.better-search-views-tree), .better-search-views-tree .search-result-file-matches {
+  margin: var(--size-4-1) 0 var(--size-4-1);
 }
 
 .tree-item.search-result > .search-result-file-matches:has(.better-search-views-tree) {
