@@ -19,28 +19,31 @@ export function PluginContextProvider(props: PluginContextProps) {
   const handleClick = async (path: string, line: number) => {
     const file = app.metadataCache.getFirstLinkpathDest(path, path);
 
-    // todo
-    //         thePlugin.app.workspace.getLeaf(Keymap.isModEvent(e)).openFile(fileT);
     await props.plugin.app.workspace.getLeaf(false).openFile(file);
 
-    if (Number.isInteger(line)) {
+    if (!Number.isInteger(line)) {
+      return;
+    }
+
+    // Sometimes it works but still throws errors
+    try {
       props.plugin.app.workspace
         .getActiveViewOfType(MarkdownView)
         .setEphemeralState({ line });
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleMouseover = (event: PointerEvent, path: string, line: number) => {
     if (
-      // todo: extend interface
       // @ts-ignore
       !props.plugin.app.internalPlugins.plugins["page-preview"].enabled
     ) {
       return;
     }
 
-    // todo: fix this
-    // todo: extend interface
+    // todo: tidy this up
     const hoverMetaKeyRequired =
       // @ts-ignore
       app.internalPlugins.plugins["page-preview"].instance.overrides[

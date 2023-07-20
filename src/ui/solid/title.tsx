@@ -18,7 +18,7 @@ function removeListToken(text: string) {
 }
 
 export function Title(props: TitleProps) {
-  const { handleClick } = usePluginContext();
+  const { handleClick, handleMouseover } = usePluginContext();
 
   // todo: clean this up. It can be shorter
   // todo: remove duplication
@@ -28,6 +28,13 @@ export function Title(props: TitleProps) {
         {(breadcrumb, i) => {
           const handleTitleClick = async () =>
             await handleClick(
+              props.contextTree.filePath,
+              breadcrumb.position.start.line
+            );
+
+          const handleTitleMouseover = (event: PointerEvent) =>
+            handleMouseover(
+              event,
               props.contextTree.filePath,
               breadcrumb.position.start.line
             );
@@ -43,6 +50,7 @@ export function Title(props: TitleProps) {
                   <div
                     class="better-search-views-breadcrumb-container"
                     onClick={handleTitleClick}
+                    onMouseOver={handleTitleMouseover}
                   >
                     <div class="better-search-views-breadcrumb-token">
                       {i() === 0 ? <ListIcon /> : <ArrowRightIcon />}
@@ -56,6 +64,7 @@ export function Title(props: TitleProps) {
                   <div
                     class="better-search-views-breadcrumb-container"
                     onClick={handleTitleClick}
+                    onMouseOver={handleTitleMouseover}
                   >
                     <div class="better-search-views-breadcrumb-token">
                       {i() === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
