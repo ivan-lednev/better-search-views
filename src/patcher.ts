@@ -4,8 +4,17 @@ import { createPositionFromOffsets } from "./metadata-cache-util/position";
 import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
+import { wikiLinkBrackets } from "./patterns";
 
 const errorTimeout = 10000;
+
+// todo: add types
+function getHighlightsFromVChild({ content, matches: [[start, end]] }: any) {
+  return content
+    .substring(start, end)
+    .toLowerCase()
+    .replace(wikiLinkBrackets, "");
+}
 
 export class Patcher {
   private readonly wrappedMatches = new WeakSet();
@@ -82,10 +91,9 @@ export class Patcher {
                   createPositionFromOffsets(content, start, end)
               );
 
+              // todo: move out
               const highlights = this.vChildren._children.map(
-                ({ content, matches: [[start, end]] }) => {
-                  return content.substring(start, end).toLowerCase();
-                }
+                getHighlightsFromVChild
               );
 
               const deduped = [...new Set(highlights)];
