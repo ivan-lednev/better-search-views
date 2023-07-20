@@ -140,8 +140,14 @@ body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-f
 
 .better-search-views-tree .collapse-icon {
   padding-top: 4px;
+  border-radius: var(--radius-s);
+  padding-bottom: 2px;
   display: flex;
   align-items: flex-start;
+}
+
+.better-search-views-tree .collapse-icon:hover {
+  background-color: var(--nav-item-background-hover);
 }
 
 .better-search-views-titles-container {
