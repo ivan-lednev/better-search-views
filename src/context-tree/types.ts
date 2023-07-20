@@ -1,7 +1,9 @@
 import {
   FileStats,
-  HeadingCache, LinkCache,
-  ListItemCache, Pos,
+  HeadingCache,
+  LinkCache,
+  ListItemCache,
+  Pos,
   SectionCache,
 } from "obsidian";
 
@@ -21,7 +23,7 @@ export interface SectionWithMatch {
   text: string;
   cache: SectionCache;
   filePath: string;
-  match?: { position: Pos }
+  match?: { position: Pos };
 }
 
 export interface WithListChildren {
@@ -42,6 +44,11 @@ export interface FileContextTree extends WithAnyChildren {
 export interface HeadingContextTree extends WithAnyChildren {
   headingCache: HeadingCache;
   filePath: string;
+}
+
+export interface Breadcrumb {
+  text: string;
+  position: Pos;
 }
 
 export interface ListContextTree extends WithListChildren {

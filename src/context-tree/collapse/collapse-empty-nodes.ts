@@ -1,10 +1,10 @@
-import { HeadingContextTree, ListContextTree } from "../types";
+import { Breadcrumb, HeadingContextTree, ListContextTree } from "../types";
 import { AnyTree } from "../../ui/solid/tree";
 
 export function collapseEmptyNodes(contextTree: AnyTree) {
   function recursiveHeadings(
     branch: HeadingContextTree,
-    breadcrumbsFromParent?: string[]
+    breadcrumbsFromParent?: Breadcrumb[]
   ): HeadingContextTree {
     branch.childLists = branch?.childLists?.map((l) => recursiveLists(l));
 
@@ -13,12 +13,17 @@ export function collapseEmptyNodes(contextTree: AnyTree) {
       !branch?.childLists?.length &&
       branch?.childHeadings?.length === 1
     ) {
+      const breadcrumbFromBranch = {
+        text: branch.text,
+        position: branch.headingCache.position,
+      };
+
       if (breadcrumbsFromParent) {
-        breadcrumbsFromParent.push(branch.text);
+        breadcrumbsFromParent.push(breadcrumbFromBranch);
       }
       const breadcrumbs = breadcrumbsFromParent
         ? breadcrumbsFromParent
-        : [branch.text];
+        : [breadcrumbFromBranch];
 
       return recursiveHeadings(branch.childHeadings[0], breadcrumbs);
     }
@@ -35,18 +40,21 @@ export function collapseEmptyNodes(contextTree: AnyTree) {
 
   function recursiveLists(
     branch: ListContextTree,
-    breadcrumbsFromParent?: string[]
+    breadcrumbsFromParent?: Breadcrumb[]
   ): ListContextTree {
     if (
       !branch?.sectionsWithMatches?.length &&
       branch?.childLists?.length === 1
     ) {
       if (breadcrumbsFromParent) {
-        breadcrumbsFromParent.push(branch.text);
+        breadcrumbsFromParent.push({
+          text: branch.text,
+          position: branch.listItemCache.position,
+        });
       }
       const breadcrumbs = breadcrumbsFromParent
         ? breadcrumbsFromParent
-        : [branch.text];
+        : [{ text: branch.text, position: branch.listItemCache.position }];
 
       return recursiveLists(branch.childLists[0], breadcrumbs);
     }

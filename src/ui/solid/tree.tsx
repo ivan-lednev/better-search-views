@@ -3,6 +3,7 @@ import { Branch } from "./branch";
 import { produce } from "immer";
 import { CacheItem, FileStats } from "obsidian";
 import {
+  Breadcrumb,
   HeadingContextTree,
   ListContextTree,
   SectionWithMatch,
@@ -10,8 +11,9 @@ import {
 import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 import Mark from "mark.js";
 
+
 export interface AnyTree {
-  breadcrumbs?: string[];
+  breadcrumbs?: Breadcrumb[];
   text: string;
   sectionsWithMatches: SectionWithMatch[];
   childLists?: ListContextTree[];
