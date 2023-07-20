@@ -147,6 +147,7 @@ body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-f
   padding-bottom: 2px;
   display: flex;
   align-items: flex-start;
+  align-self: flex-start;
 }
 
 .better-search-views-tree .collapse-icon:hover {
