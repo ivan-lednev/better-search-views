@@ -1,5 +1,5 @@
 /* TODO: blockquotes need a better fix */
-.markdown-rendered .better-search-views-file-match > *, .better-search-views-file-match > *, .better-search-views-file-match > blockquote > p {
+.better-search-views-file-match.markdown-rendered > *, .better-search-views-file-match.markdown-rendered > blockquote > * {
   margin-block-start: 0;
   margin-block-end: 0;
   white-space: normal;
@@ -149,10 +149,6 @@ body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-f
   display: flex;
   align-items: flex-start;
   align-self: flex-start;
-}
-
-.better-search-views-tree .collapse-icon:hover {
-  background-color: var(--nav-item-background-hover);
 }
 
 .better-search-views-titles-container {
