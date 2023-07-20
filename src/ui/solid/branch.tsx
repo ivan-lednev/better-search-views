@@ -48,7 +48,7 @@ export function Branch(props: BranchProps) {
 
   return (
     <Show when={props.contextTree}>
-      <div class="tree-item search-result better-backlinks-ref-item-container">
+      <div class="tree-item search-result better-search-views-tree">
         {/* TODO: fix this hack for file names */}
         <Show when={breadcrumbs().some((b) => b.length > 0)}>
           <div class="tree-item-self search-result-file-title is-clickable">
@@ -76,7 +76,7 @@ export function Branch(props: BranchProps) {
           </div>
         </Show>
         <Show when={childrenShown()}>
-          <div class="better-backlinks-tree-item-children">
+          <div class="better-search-views-tree-item-children">
             <MatchSection
               sectionsWithMatches={props.contextTree.sectionsWithMatches}
             />

@@ -12,7 +12,7 @@ export function MatchSection(props: MatchSectionProps) {
 
   return (
     <Show when={props.sectionsWithMatches.length > 0}>
-      <div class="search-result-file-matches better-backlinks-ref-item-collection-items">
+      <div class="search-result-file-matches better-search-views-ref-item-collection-items">
         <For each={props.sectionsWithMatches}>
           {(section, index) => {
             const filePath = props.sectionsWithMatches[index()].filePath;
@@ -21,7 +21,7 @@ export function MatchSection(props: MatchSectionProps) {
 
             return (
               <div
-                class="search-result-file-match better-backlinks-file-match"
+                class="search-result-file-match better-search-views-file-match"
                 ref={async (el) => {
                   await MarkdownRenderer.renderMarkdown(
                     section.text,

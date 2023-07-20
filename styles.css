@@ -1,30 +1,30 @@
 /* TODO: blockquotes need a better fix */
-.markdown-rendered .better-backlinks-file-match > *, .better-backlinks-file-match > *, .better-backlinks-file-match > blockquote > p {
+.markdown-rendered .better-search-views-file-match > *, .better-search-views-file-match > *, .better-search-views-file-match > blockquote > p {
   margin-block-start: 0;
   margin-block-end: 0;
   white-space: normal;
 }
 
-.better-backlinks-file-match > blockquote {
+.better-search-views-file-match > blockquote {
   margin-inline-start: 0;
   margin-inline-end: 0;
 }
 
-.better-backlinks-file-match ul {
+.better-search-views-file-match ul {
   padding-inline-start: var(--list-indent);
 }
 
-.better-backlinks-file-match a {
+.better-search-views-file-match a {
   text-decoration: none;
   cursor: default;
 }
 
-.better-backlinks-file-match ul {
+.better-search-views-file-match ul {
   position: relative;
 }
 
 /* Copied from Obsidian */
-.better-backlinks-file-match li > ul::before {
+.better-search-views-file-match li > ul::before {
   content: "\200B";
   position: absolute;
   display: block;
@@ -35,19 +35,19 @@
 }
 
 /*.embedded-backlinks .backlink-pane .tree-item-self*/
-.better-backlinks-breadcrumbs {
+.better-search-views-breadcrumbs {
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.better-backlinks-tree-item-children {
+.better-search-views-tree-item-children {
   margin-left: 10px;
   padding-left: 10px;
   border-left: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 
-.better-backlinks-breadcrumb-container {
+.better-search-views-breadcrumb-container {
   display: flex;
   align-items: flex-start;
   gap: 0.5em;
@@ -62,7 +62,7 @@
   border-bottom: 1px solid var(--background-modifier-border)
 }
 
-.search-result-file-matches:has(.better-backlinks-ref-item-container) {
+.search-result-file-matches:has(.better-search-views-tree) {
   font-size: var(--font-ui-smaller);
   line-height: var(--line-height-tight);
   background-color: revert;
@@ -72,13 +72,13 @@
   color: var(--text-muted);
 }
 
-.tree-item.search-result > .search-result-file-matches:has(.better-backlinks-ref-item-container) {
+.tree-item.search-result > .search-result-file-matches:has(.better-search-views-tree) {
   box-shadow: none;
   /* Fix box shadow in child match boxes */
   padding-right: 1px;
 }
 
-.search-result-file-matches:has(.better-backlinks-ref-item-container) .better-backlinks-file-match {
+.search-result-file-matches:has(.better-search-views-tree) .better-search-views-file-match {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
   background-color: var(--search-result-background);
 }
@@ -89,7 +89,7 @@
   color: var(--text-faint);
 }
 
-.better-backlinks-ref-item-container .tree-item-inner {
+.better-search-views-tree .tree-item-inner {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -100,42 +100,42 @@
   /*box-shadow: 0 0 0 1px var(--background-modifier-border);*/
 }
 
-.better-backlinks-ref-item-container blockquote {
+.better-search-views-tree blockquote {
   padding-left: 10px;
   border-left: var(--blockquote-border-thickness) solid var(--blockquote-border-color)
 }
 
-.better-backlinks-ref-item-container .tree-item-inner:hover {
+.better-search-views-tree .tree-item-inner:hover {
   background-color: var(--nav-item-background-hover);
 }
 
-.better-backlinks-ref-item-container .search-result-file-title {
+.better-search-views-tree .search-result-file-title {
   /* TODO: this is still hardcoded */
   padding-left: calc(20px + var(--nav-indentation-guide-width));
   padding-right: 0;
 }
 
-body:not(.is-grabbing) .better-backlinks-ref-item-container .tree-item-self.search-result-file-title:hover {
+body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-file-title:hover {
   background-color: var(--titlebar-background);
 }
 
-.better-backlinks-ref-item-container .better-backlinks-breadcrumb-container {
+.better-search-views-tree .better-search-views-breadcrumb-container {
   padding-left: 4px;
   padding-right: 4px;
   flex-grow: 1;
 }
 
-.better-backlinks-ref-item-container .better-backlinks-breadcrumb-container:not(:last-child) {
+.better-search-views-tree .better-search-views-breadcrumb-container:not(:last-child) {
   padding-bottom: 2px;
   border-bottom: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 
-.better-backlinks-breadcrumb-token {
+.better-search-views-breadcrumb-token {
   display: flex;
   align-items: center;
 }
 
-.better-backlinks-ref-item-container .collapse-icon {
+.better-search-views-tree .collapse-icon {
   padding-top: 4px;
   display: flex;
   align-items: flex-start;

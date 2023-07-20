@@ -32,7 +32,7 @@ export function Title(props: TitleProps) {
             <Match when={props.type === "list"}>
               <div class="tree-item-inner">
                 <div
-                  class="better-backlinks-breadcrumb-container"
+                  class="better-search-views-breadcrumb-container"
                   onClick={async () =>
                     handleClick(
                       props.contextTree.filePath,
@@ -41,7 +41,7 @@ export function Title(props: TitleProps) {
                     )
                   }
                 >
-                  <div class="better-backlinks-breadcrumb-token">
+                  <div class="better-search-views-breadcrumb-token">
                     {i === 0 ? <ListIcon /> : <ArrowRightIcon />}
                   </div>
                   <div>{removeListToken(breadcrumb())}</div>
@@ -51,7 +51,7 @@ export function Title(props: TitleProps) {
             <Match when={props.type === "heading"}>
               <div class="tree-item-inner">
                 <div
-                  class="better-backlinks-breadcrumb-container"
+                  class="better-search-views-breadcrumb-container"
                   onClick={async () =>
                     await handleClick(
                       props.contextTree.filePath,
@@ -60,7 +60,7 @@ export function Title(props: TitleProps) {
                     )
                   }
                 >
-                  <div class="better-backlinks-breadcrumb-token">
+                  <div class="better-search-views-breadcrumb-token">
                     {i === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
                   </div>
                   <div>{breadcrumb()}</div>
