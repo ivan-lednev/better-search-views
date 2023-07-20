@@ -24,6 +24,7 @@
 }
 
 /* Copied from Obsidian */
+
 .better-search-views-file-match li > ul::before {
   content: "\200B";
   position: absolute;
@@ -122,7 +123,7 @@
 }
 
 body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-file-title:hover {
-  background-color: var(--titlebar-background);
+  background-color: unset;
 }
 
 .better-search-views-tree .better-search-views-breadcrumb-container {
