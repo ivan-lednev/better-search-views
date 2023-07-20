@@ -74,11 +74,11 @@
 
 .tree-item.search-result > .search-result-file-matches:has(.better-search-views-tree) {
   box-shadow: none;
-  /* Fix box shadow in child match boxes */
+  /* This fixes box shadow in child match boxes */
   padding-right: 1px;
 }
 
-.search-result-file-matches:has(.better-search-views-tree) .better-search-views-file-match {
+.search-result-file-matches:has(.better-search-views-tree) .better-search-views-file-match:not(:hover) {
   box-shadow: 0 0 0 1px var(--background-modifier-border);
   background-color: var(--search-result-background);
 }
