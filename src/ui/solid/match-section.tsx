@@ -29,13 +29,6 @@ export function MatchSection(props: MatchSectionProps) {
                     filePath,
                     plugin
                   );
-
-                  // if (el.innerHTML.includes("target")) {
-                  //   el.innerHTML = el.innerHTML.replace(
-                  //     "target",
-                  //     `<span class="search-result-file-matched-text">target</span>`
-                  //   );
-                  // }
                 }}
                 onClick={async () => {
                   await handleClick(filePath, line);

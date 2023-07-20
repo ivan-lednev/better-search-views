@@ -22,8 +22,6 @@ export class Patcher {
       around(Component.prototype, {
         addChild(old: Component["addChild"]) {
           return function (child: unknown, ...args: unknown[]) {
-            const result = old.call(this, child, ...args);
-
             const thisIsSearchView = this.hasOwnProperty("searchQuery");
 
             if (thisIsSearchView && !patcher.searchResultItemPatched) {
@@ -31,7 +29,7 @@ export class Patcher {
               patcher.searchResultItemPatched = true;
             }
 
-            return result;
+            return old.call(this, child, ...args);
           };
         },
       })
@@ -63,11 +61,10 @@ export class Patcher {
     this.plugin.register(
       around(searchResultItem.constructor.prototype, {
         renderContentMatches(old: unknown) {
-          // todo: do this one level higher
-
           return function (...args: unknown[]) {
             const result = old.call(this, ...args);
 
+            // todo: clean this up
             if (
               patcher.wrappedSearchResultItems.has(this) ||
               !this.vChildren._children ||
