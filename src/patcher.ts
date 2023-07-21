@@ -27,6 +27,7 @@ export class Patcher {
   private currentNotice: Notice;
   private searchResultItemPatched = false;
   private renderContentMatchesPatched = false;
+  private disposeHandlers: Array<() => void> = [];
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
 
@@ -64,6 +65,14 @@ export class Patcher {
             }
 
             return result;
+          };
+        },
+        emptyResults(old: any) {
+          return function (...args: any[]) {
+            patcher.disposeHandlers.forEach((handler) => handler());
+            patcher.disposeHandlers = [];
+
+            return old.call(this, ...args);
           };
         },
       })
@@ -169,12 +178,14 @@ export class Patcher {
 
     // todo: remove the hack for file names
 
-    renderContextTree({
+    const dispose = renderContextTree({
       highlights,
       contextTrees: [dedupedTree],
       el: mountPoint,
       plugin: this.plugin,
     });
+
+    this.disposeHandlers.push(dispose)
 
     match.el = mountPoint;
   }

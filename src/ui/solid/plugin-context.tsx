@@ -18,7 +18,10 @@ const PluginContext = createContext<PluginContextValue>();
 
 export function PluginContextProvider(props: PluginContextProps) {
   const handleClick = async (path: string, line: number) => {
-    const file = app.metadataCache.getFirstLinkpathDest(path, path);
+    const file = props.plugin.app.metadataCache.getFirstLinkpathDest(
+      path,
+      path
+    );
 
     if (!file) {
       new Notice(`File ${path} does not exist`);
@@ -59,7 +62,7 @@ export function PluginContextProvider(props: PluginContextProps) {
         scroll: line,
       };
       if (path) {
-        app.workspace.trigger(
+        props.plugin.app.workspace.trigger(
           "link-hover",
           {},
           target,

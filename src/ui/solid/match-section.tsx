@@ -1,5 +1,5 @@
-import { For, Show } from "solid-js";
-import { MarkdownRenderer } from "obsidian";
+import { For, onCleanup, Show } from "solid-js";
+import { Component, MarkdownRenderer } from "obsidian";
 import { usePluginContext } from "./plugin-context";
 import { SectionWithMatch } from "../../types";
 
@@ -8,7 +8,12 @@ interface MatchSectionProps {
 }
 
 export function MatchSection(props: MatchSectionProps) {
-  const { handleClick, handleMouseover, plugin } = usePluginContext();
+  const { handleClick, handleMouseover } = usePluginContext();
+  const matchLifecycleManager = new Component();
+
+  onCleanup(() => {
+    matchLifecycleManager.unload();
+  });
 
   return (
     <Show when={props.sectionsWithMatches.length > 0}>
@@ -25,8 +30,10 @@ export function MatchSection(props: MatchSectionProps) {
                     section.text,
                     el,
                     section.filePath,
-                    plugin
+                    matchLifecycleManager
                   );
+
+                  matchLifecycleManager.load();
                 }}
                 onClick={async () => {
                   await handleClick(section.filePath, line);
