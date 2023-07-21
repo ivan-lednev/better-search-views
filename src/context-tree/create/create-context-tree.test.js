@@ -353,8 +353,6 @@ test("gets only child list items to be displayed in a match section", () => {
             offset: 18,
           },
         },
-        position: "target",
-        original: "[[target]]",
         displayText: "target",
       },
     ],
