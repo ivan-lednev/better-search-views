@@ -7,11 +7,9 @@ import {
   Pos,
   SectionCache,
 } from "obsidian";
-import { Tree } from "istanbul-lib-report";
 
 export interface createContextTreeProps {
   // todo: better naming. Separate metadata cache?
-  // todo: this is backlinks. Make it clear that this comes from target, and the other three from referrer
   positions: LinkCache[];
   stat: FileStats;
   fileContents: string;
