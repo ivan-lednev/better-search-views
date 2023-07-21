@@ -32,7 +32,6 @@ export function MatchSection(props: MatchSectionProps) {
                   await handleClick(section.filePath, line);
                 }}
                 onMouseOver={(event) => {
-                  // @ts-ignore
                   handleMouseover(event, section.filePath, line);
                 }}
               />

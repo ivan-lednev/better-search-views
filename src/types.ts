@@ -47,3 +47,8 @@ export interface Breadcrumb {
   type: TreeType;
   position: Pos;
 }
+
+export type MouseOverEvent = MouseEvent & {
+  currentTarget: Element;
+  target: Element;
+};

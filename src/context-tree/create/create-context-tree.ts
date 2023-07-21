@@ -114,7 +114,7 @@ export function createContextTree({
       );
 
       context.sectionsWithMatches.push({
-        // todo: replace with cacheItem with more generic type
+        // TODO: add type to the cache
         // @ts-ignore
         cache: listItemCacheWithDescendants[0],
         text,

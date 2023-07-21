@@ -3,7 +3,7 @@ import { usePluginContext } from "./plugin-context";
 import { ListIcon } from "./icons/list-icon";
 import { ArrowRightIcon } from "./icons/arrow-right-icon";
 import { HeadingIcon } from "./icons/heading-icon";
-import { Breadcrumb, ContextTree } from "../../types";
+import { Breadcrumb, ContextTree, MouseOverEvent } from "../../types";
 import { listItemToken } from "../../patterns";
 
 interface TitleProps {
@@ -28,7 +28,7 @@ export function Title(props: TitleProps) {
               breadcrumb.position.start.line
             );
 
-          const handleTitleMouseover = (event: PointerEvent) =>
+          const handleTitleMouseover = (event: MouseOverEvent) =>
             handleMouseover(
               event,
               props.contextTree.filePath,

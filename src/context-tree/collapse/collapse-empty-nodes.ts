@@ -1,10 +1,10 @@
-import { Breadcrumb, ContextTree } from "../../types";
+import { Breadcrumb, CollapsedContextTree, ContextTree } from "../../types";
 
 export function collapseEmptyNodes(contextTree: ContextTree) {
   function recursive(
     branch: ContextTree,
     breadcrumbsFromParent?: Breadcrumb[]
-  ): ContextTree {
+  ): CollapsedContextTree {
     if (
       !branch?.sectionsWithMatches?.length &&
       branch?.branches?.length === 1
@@ -27,11 +27,7 @@ export function collapseEmptyNodes(contextTree: ContextTree) {
 
     branch.branches = branch.branches.map((branch) => recursive(branch));
 
-    // @ts-ignore
-    // todo: add breadcrumbs to types
-    branch.breadcrumbs = breadcrumbsFromParent;
-
-    return branch;
+    return { ...branch, breadcrumbs: breadcrumbsFromParent };
   }
 
   contextTree.branches = contextTree?.branches?.map((branch) =>

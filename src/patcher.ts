@@ -35,7 +35,7 @@ export class Patcher {
     this.plugin.register(
       around(Component.prototype, {
         addChild(old: Component["addChild"]) {
-          return function (child: unknown, ...args: unknown[]) {
+          return function (child: any, ...args: any[]) {
             const thisIsSearchView = this.hasOwnProperty("searchQuery");
 
             if (thisIsSearchView && !patcher.searchResultItemPatched) {
@@ -50,12 +50,12 @@ export class Patcher {
     );
   }
 
-  patchSearchResultDom(searchResultDom: unknown) {
+  patchSearchResultDom(searchResultDom: any) {
     const patcher = this;
     this.plugin.register(
       around(searchResultDom.constructor.prototype, {
-        addResult(old: unknown) {
-          return function (...args: unknown[]) {
+        addResult(old: any) {
+          return function (...args: any[]) {
             const result = old.call(this, ...args);
 
             if (!patcher.renderContentMatchesPatched) {
@@ -70,12 +70,12 @@ export class Patcher {
     );
   }
 
-  patchSearchResultItem(searchResultItem: unknown) {
+  patchSearchResultItem(searchResultItem: any) {
     const patcher = this;
     this.plugin.register(
       around(searchResultItem.constructor.prototype, {
-        renderContentMatches(old: unknown) {
-          return function (...args: unknown[]) {
+        renderContentMatches(old: any) {
+          return function (...args: any[]) {
             const result = old.call(this, ...args);
 
             // todo: clean this up
@@ -92,7 +92,7 @@ export class Patcher {
             try {
               const matchPositions = this.vChildren._children.map(
                 // todo: works only for one match per block
-                ({ content, matches: [[start, end]] }: unknown) =>
+                ({ content, matches: [[start, end]] }: any) =>
                   createPositionFromOffsets(content, start, end)
               );
 
@@ -124,7 +124,7 @@ export class Patcher {
     );
   }
 
-  reportError(error: unknown, filePath: string) {
+  reportError(error: any, filePath: string) {
     const message = `Error while mounting Better Search Views tree for file path: ${filePath}`;
     this.currentNotice?.hide();
     this.currentNotice = new Notice(

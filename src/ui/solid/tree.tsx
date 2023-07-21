@@ -30,6 +30,7 @@ export function Tree(props: TreeProps) {
   });
 
   return (
+    // @ts-ignore
     <div ref={markContextRef}>
       <For each={collapsedTrees()}>
         {(tree) => <Branch contextTree={tree} />}

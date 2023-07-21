@@ -1,6 +1,7 @@
 import { JSX, createContext, useContext } from "solid-js";
 import { Keymap, MarkdownView, Notice } from "obsidian";
 import BetterBacklinksPlugin from "../../plugin";
+import { MouseOverEvent } from "../../types";
 
 interface PluginContextProps {
   plugin: BetterBacklinksPlugin;
@@ -9,7 +10,7 @@ interface PluginContextProps {
 
 interface PluginContextValue {
   handleClick: (path: string, line?: number) => Promise<void>;
-  handleMouseover: (event: PointerEvent, path: string, line?: number) => void;
+  handleMouseover: (event: MouseOverEvent, path: string, line?: number) => void;
   plugin: BetterBacklinksPlugin;
 }
 
@@ -42,7 +43,11 @@ export function PluginContextProvider(props: PluginContextProps) {
     }
   };
 
-  const handleMouseover = (event: PointerEvent, path: string, line: number) => {
+  const handleMouseover = (
+    event: MouseOverEvent,
+    path: string,
+    line: number
+  ) => {
     // @ts-ignore
     if (!props.plugin.app.internalPlugins.plugins["page-preview"].enabled) {
       return;
