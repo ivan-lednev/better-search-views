@@ -1,4 +1,5 @@
 import {
+  CacheItem,
   FileStats,
   HeadingCache,
   LinkCache,
@@ -34,6 +35,7 @@ export interface WithListChildren {
 
 export interface WithAnyChildren extends WithListChildren {
   childHeadings: HeadingContextTree[];
+  branches;
 }
 
 export interface FileContextTree extends WithAnyChildren {
@@ -44,6 +46,26 @@ export interface FileContextTree extends WithAnyChildren {
 export interface HeadingContextTree extends WithAnyChildren {
   headingCache: HeadingCache;
   filePath: string;
+}
+
+export type TreeType = "heading" | "list" | "file";
+
+export interface TreeWithoutCache {
+  text: string;
+  filePath: string;
+  type: TreeType;
+  branches: Tree[];
+  sectionsWithMatches: SectionWithMatch[];
+}
+
+// todo: seriously? TreeWithoutCache?
+export interface Tree extends TreeWithoutCache {
+  cacheItem: CacheItem;
+}
+
+export interface FileTree extends TreeWithoutCache {
+  type: "file";
+  stat: FileStats;
 }
 
 export interface Breadcrumb {

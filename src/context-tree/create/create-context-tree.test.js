@@ -17,8 +17,6 @@ test("builds a tree with top-level links", () => {
           offset: 10,
         },
       },
-      link: "target",
-      original: "[[target]]",
       displayText: "target",
     },
   ];
@@ -55,7 +53,7 @@ test("builds a tree with top-level links", () => {
         text: `[[target]]`,
       },
     ],
-    childHeadings: [],
+    branches: [],
   });
 });
 
@@ -79,8 +77,6 @@ test("builds a tree with nested headings", () => {
           offset: 21,
         },
       },
-      link: "target",
-      original: "[[target]]",
       displayText: "target",
     },
   ];
@@ -179,13 +175,15 @@ test("builds a tree with nested headings", () => {
     })
   ).toMatchObject({
     sectionsWithMatches: [],
-    childHeadings: [
+    branches: [
       {
+        type: "heading",
         text: "H1",
         sectionsWithMatches: [],
-        childHeadings: [
+        branches: [
           {
             text: "H2",
+            type: "heading",
             sectionsWithMatches: [
               {
                 text: "[[target]]",
@@ -218,8 +216,6 @@ test("builds a tree with nested lists", () => {
           offset: 25,
         },
       },
-      link: "target",
-      original: "[[target]]",
       displayText: "target",
     },
   ];
@@ -298,11 +294,13 @@ test("builds a tree with nested lists", () => {
       ...cache,
     })
   ).toMatchObject({
-    childLists: [
+    branches: [
       {
+        type: "list",
         text: "- l1",
-        childLists: [
+        branches: [
           {
+            type: "list",
             text: "- l2",
             sectionsWithMatches: [
               { text: expect.stringContaining("- [[target]]") },
@@ -336,8 +334,6 @@ test("gets only child list items to be displayed in a match section", () => {
           offset: 18,
         },
       },
-      link: "target",
-      original: "[[target]]",
       displayText: "target",
     },
   ];
@@ -357,7 +353,7 @@ test("gets only child list items to be displayed in a match section", () => {
             offset: 18,
           },
         },
-        link: "target",
+        position: "target",
         original: "[[target]]",
         displayText: "target",
       },
@@ -435,8 +431,9 @@ test("gets only child list items to be displayed in a match section", () => {
       ...cache,
     })
   ).toMatchObject({
-    childLists: [
+    branches: [
       {
+        type: "list",
         text: "- l1",
         sectionsWithMatches: [
           {
@@ -470,8 +467,6 @@ and this is the well
           offset: 21,
         },
       },
-      link: "target",
-      original: "[[target]]",
       displayText: "target",
     },
   ];
@@ -491,8 +486,6 @@ and this is the well
             offset: 21,
           },
         },
-        link: "target",
-        original: "[[target]]",
         displayText: "target",
       },
     ],
@@ -589,11 +582,13 @@ and this is the well
     })
   ).toMatchObject({
     sectionsWithMatches: [],
-    childHeadings: [
+    branches: [
       {
+        type: "heading",
         text: "H1",
-        childHeadings: [
+        branches: [
           {
+            type: "heading",
             text: `H2 [[target]]`,
             sectionsWithMatches: [
               {

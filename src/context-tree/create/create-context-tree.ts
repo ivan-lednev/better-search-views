@@ -1,10 +1,14 @@
-import { FileStats, HeadingCache, ListItemCache } from "obsidian";
+import { CacheItem, FileStats, HeadingCache, ListItemCache } from "obsidian";
 import {
   createContextTreeProps,
   FileContextTree,
+  FileTree,
   HeadingContextTree,
   ListContextTree,
   SectionWithMatch,
+  Tree,
+  TreeType,
+  TreeWithoutCache,
 } from "../types";
 import {
   getHeadingBreadcrumbs,
@@ -35,13 +39,12 @@ export function createContextTree({
   headings = [],
   sections = [],
 }: createContextTreeProps) {
-  // todo: rename to positions
-  const linksWithContext = positions.map((link) => {
+  const positionsWithContext = positions.map((position) => {
     return {
-      headingBreadcrumbs: getHeadingBreadcrumbs(link.position, headings),
-      listBreadcrumbs: getListBreadcrumbs(link.position, listItems),
-      sectionCache: getSectionContaining(link.position, sections),
-      link,
+      headingBreadcrumbs: getHeadingBreadcrumbs(position.position, headings),
+      listBreadcrumbs: getListBreadcrumbs(position.position, listItems),
+      sectionCache: getSectionContaining(position.position, sections),
+      position,
     };
   });
 
@@ -51,65 +54,60 @@ export function createContextTree({
     headingBreadcrumbs,
     listBreadcrumbs,
     sectionCache,
-    link,
-  } of linksWithContext) {
-    let context = root;
+    position,
+  } of positionsWithContext) {
+    let context: TreeWithoutCache = root;
 
     for (const headingCache of headingBreadcrumbs) {
-      const headingFoundInChildren = context.childHeadings.find((tree) =>
-        isSamePosition(tree.headingCache.position, headingCache.position)
+      const headingFoundInChildren = context.branches.find((tree) =>
+        isSamePosition(tree.cacheItem.position, headingCache.position)
       );
 
       if (headingFoundInChildren) {
-        // todo: remove
-        // @ts-ignore
         context = headingFoundInChildren;
       } else {
-        const newHeadingContext: HeadingContextTree = createHeadingContextTree(
+        const newContext: Tree = createContextTreeBranch(
+          "heading",
           headingCache,
-          filePath
+          filePath,
+          headingCache.heading
         );
 
-        context.childHeadings.push(newHeadingContext);
-        // todo: remove
-        // @ts-ignore
-        context = newHeadingContext;
+        context.branches.push(newContext);
+        context = newContext;
       }
     }
 
     for (const listItemCache of listBreadcrumbs) {
-      const listItemFoundInChildren = context.childLists.find((tree) =>
-        isSamePosition(tree.listItemCache.position, listItemCache.position)
+      const listItemFoundInChildren = context.branches.find((tree) =>
+        isSamePosition(tree.cacheItem.position, listItemCache.position)
       );
 
       if (listItemFoundInChildren) {
-        // todo: fix
-        // @ts-ignore
         context = listItemFoundInChildren;
       } else {
-        const newListContext: ListContextTree = createListContextTree(
+        const newListContext: Tree = createContextTreeBranch(
+          "list",
           listItemCache,
-          getTextAtPosition(fileContents, listItemCache.position),
-          filePath
+          filePath,
+          getTextAtPosition(fileContents, listItemCache.position)
         );
 
-        context.childLists.push(newListContext);
-        // todo: fix
-        // @ts-ignore
+        context.branches.push(newListContext);
         context = newListContext;
       }
     }
 
     // todo: move to metadata-cache-util
     const headingIndexAtPosition = getHeadingIndexContaining(
-      link.position,
+      position.position,
       headings
     );
     const linkIsInsideHeading = headingIndexAtPosition >= 0;
 
-    if (isPositionInList(link.position, listItems)) {
+    if (isPositionInList(position.position, listItems)) {
       const indexOfListItemContainingLink = getListItemIndexContaining(
-        link.position,
+        position.position,
         listItems
       );
       const listItemCacheWithDescendants = getListItemWithDescendants(
@@ -121,18 +119,16 @@ export function createContextTree({
         listItemCacheWithDescendants
       );
 
-      // todo: position highlighting is going to break because of formatting here
       context.sectionsWithMatches.push({
-        // todo: fix
+        // todo: replace with cacheItem with more generic type
         // @ts-ignore
         cache: listItemCacheWithDescendants[0],
         text,
         filePath,
-        // position: link,
       });
     } else if (linkIsInsideHeading) {
       const firstSectionUnderHeading = getFirstSectionUnder(
-        link.position,
+        position.position,
         sections
       );
 
@@ -166,17 +162,30 @@ export function createContextTree({
   return root;
 }
 
-function createFileContextTree(
-  filePath: string,
-  stat: FileStats
-): FileContextTree {
+function createFileContextTree(filePath: string, stat: FileStats): FileTree {
   return {
+    type: "file",
     text: filePath,
     filePath,
     stat,
     sectionsWithMatches: [],
-    childLists: [],
-    childHeadings: [],
+    branches: [],
+  };
+}
+
+function createContextTreeBranch(
+  type: TreeType,
+  cacheItem: CacheItem,
+  filePath: string,
+  text: string
+) {
+  return {
+    type,
+    cacheItem,
+    filePath,
+    text,
+    branches: [],
+    sectionsWithMatches: [],
   };
 }
 
