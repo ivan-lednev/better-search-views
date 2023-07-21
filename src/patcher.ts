@@ -129,7 +129,7 @@ export class Patcher {
     );
   }
 
-  reportError(error: Error, filePath: string) {
+  reportError(error: unknown, filePath: string) {
     const message = `Error while mounting Better Search Views tree for file path: ${filePath}`;
     this.currentNotice?.hide();
     this.currentNotice = new Notice(
@@ -153,6 +153,11 @@ export class Patcher {
 
     const { cache, content } = match;
     const { file } = container;
+
+    if (file.extension === "canvas") {
+      console.log({ match });
+      return;
+    }
 
     const contextTree = createContextTree({
       positions,
