@@ -2,22 +2,26 @@
 
 > **Warning**
 >
-> - The plugin is in early development, so it may be buggy
-> - It relies on an internal API, so it may break after you update Obsidian
-> - You need to reload Obsidian after enabling/disabling it
-> 
-> I encourage you to create issues if you noticed anything wrong: https://github.com/ivan-lednev/better-search-views/issues
+> - You need to reload Obsidian after you **install/update/enable/disable** the plugin
+> - The plugin reaches into Obsidian's internals, so it may break after an update. If you noticed that, [please create an issue](https://github.com/ivan-lednev/better-search-views/issues)
 
 ## What it does
 
-The plugin enhances native search views to create an outliner-like context around every match:
-![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/4da817f0-fb0e-4ab2-a0a9-0b8763d69fb8)
-
+The plugin brings more outliner goodnes into Obsidian: it improves search views to create an outliner-like context around every match.
 - **It patches native search, backlinks view, embedded backlinks and embedded queries**
 - It renders markdown in the match to HTML
 - It builds structural breadcrumbs to the match by chaining all the ancestor headings and list items above
 - If the match is in a list item, it displays all the sub-list items below it
 - If the match is in a heading, it displays the first section below the heading (you know, for context)
+
+Global search looks like this:
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/94ee1165-4ee3-4af9-8031-fb4b7f13588c)
+
+And here's backlinks in document:
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/2f5229bc-8d3d-4027-b01c-fa36d5872716)
+
+Clicking on breadcrumbs works just as you might expect:
+
 
 ## How to use it
 
