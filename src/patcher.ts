@@ -10,9 +10,11 @@ import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
 import {
   FileContextTree,
+  FileTree,
   HeadingContextTree,
   ListContextTree,
   SectionWithMatch,
+  Tree,
 } from "./context-tree/types";
 import { produce } from "immer";
 
@@ -192,7 +194,6 @@ function areMatchesInSameSection(a: SectionWithMatch, b: SectionWithMatch) {
   );
 }
 
-// todo: this is potentially slow
 function dedupe(matches: SectionWithMatch[]) {
   return matches.filter(
     (match: SectionWithMatch, index: number, array: SectionWithMatch[]) =>
@@ -201,35 +202,12 @@ function dedupe(matches: SectionWithMatch[]) {
   );
 }
 
-// todo: no heading/list separation
-// todo: use generic recursive func for tree
-function dedupeMatchesRecursively(tree: FileContextTree) {
-  function recursiveHeadings(branch: HeadingContextTree): HeadingContextTree {
-    branch.sectionsWithMatches = dedupe(branch.sectionsWithMatches);
-
-    branch.childHeadings = branch.childHeadings.map((h) =>
-      recursiveHeadings(h)
-    );
-
-    return branch;
-  }
-
-  function recursiveLists(branch: ListContextTree): ListContextTree {
-    branch.sectionsWithMatches = dedupe(branch.sectionsWithMatches);
-
-    branch.childLists = branch.childLists.map((l) => recursiveLists(l));
-
-    return branch;
-  }
-
+function dedupeMatchesRecursively(tree: Tree) {
   tree.sectionsWithMatches = dedupe(tree.sectionsWithMatches);
 
-  tree &&
-    (tree.childHeadings = tree?.childHeadings?.map((h) =>
-      recursiveHeadings(h)
-    ));
-
-  tree && (tree.childLists = tree?.childLists?.map((l) => recursiveLists(l)));
+  tree.branches = tree.branches.map((branch) =>
+    dedupeMatchesRecursively(branch)
+  );
 
   return tree;
 }

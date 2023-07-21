@@ -188,31 +188,3 @@ function createContextTreeBranch(
     sectionsWithMatches: [],
   };
 }
-
-function createHeadingContextTree(
-  headingCache: HeadingCache,
-  filePath: string
-): HeadingContextTree {
-  return {
-    headingCache,
-    text: headingCache.heading,
-    filePath,
-    sectionsWithMatches: [],
-    childHeadings: [], // todo: we can already push all the children here
-    childLists: [],
-  };
-}
-
-function createListContextTree(
-  listItemCache: ListItemCache,
-  text: string,
-  filePath: string
-): ListContextTree {
-  return {
-    text,
-    listItemCache,
-    filePath,
-    sectionsWithMatches: [],
-    childLists: [],
-  };
-}
