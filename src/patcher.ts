@@ -104,7 +104,7 @@ export class Patcher {
               );
 
               // todo: move out
-              const highlights = this.vChildren._children.map(
+              const highlights: string[] = this.vChildren._children.map(
                 getHighlightsFromVChild
               );
 

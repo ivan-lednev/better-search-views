@@ -15,9 +15,7 @@ export function MatchSection(props: MatchSectionProps) {
       <div class="search-result-file-matches better-search-views-ref-item-collection-items">
         <For each={props.sectionsWithMatches}>
           {(section, index) => {
-            const filePath = props.sectionsWithMatches[index()].filePath;
-            const line =
-              props.sectionsWithMatches[index()].cache.position.start.line;
+            const line = section.cache.position.start.line;
 
             return (
               <div
@@ -26,17 +24,16 @@ export function MatchSection(props: MatchSectionProps) {
                   await MarkdownRenderer.renderMarkdown(
                     section.text,
                     el,
-                    filePath,
+                    section.filePath,
                     plugin
                   );
                 }}
                 onClick={async () => {
-                  await handleClick(filePath, line);
+                  await handleClick(section.filePath, line);
                 }}
                 onMouseOver={(event) => {
-                  // todo: remove
                   // @ts-ignore
-                  handleMouseover(event, filePath, line);
+                  handleMouseover(event, section.filePath, line);
                 }}
               />
             );
