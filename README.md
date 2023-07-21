@@ -11,7 +11,7 @@ Until the plugin added to the community plugin list, you can try it out via [BRA
 
 ## What it does
 
-The plugin brings more outliner goodnes into Obsidian: it improves search views to create an outliner-like context around every match.
+The plugin brings more outliner goodness into Obsidian: it improves search views to create an outliner-like context around every match.
 - **It patches native search, backlinks view, embedded backlinks and embedded queries**
 - It renders markdown in the match to HTML
 - It builds structural breadcrumbs to the match by chaining all the ancestor headings and list items above
