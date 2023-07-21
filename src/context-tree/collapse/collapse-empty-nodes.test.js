@@ -5,37 +5,31 @@ test("collapse empty nodes with 2 leaves", () => {
     collapseEmptyNodes({
       text: "file",
       sectionsWithMatches: [],
-      childLists: [],
-      childHeadings: [
+      branches: [
         {
           text: "empty 1",
           sectionsWithMatches: [],
-          childLists: [],
-          headingCache: { position: { start: { line: 1 } } },
-          childHeadings: [
+          cacheItem: { position: { start: { line: 1 } } },
+          branches: [
             {
               text: "empty 1.1",
               sectionsWithMatches: [],
-              childLists: [],
-              headingCache: { position: { start: { line: 2 } } },
-              childHeadings: [
+              cacheItem: { position: { start: { line: 2 } } },
+              branches: [
                 {
                   text: "empty 1.1.1",
                   sectionsWithMatches: [],
-                  childLists: [],
-                  headingCache: { position: { start: { line: 3 } } },
-                  childHeadings: [
+                  cacheItem: { position: { start: { line: 3 } } },
+                  branches: [
                     {
                       text: "empty 1.1.1.1",
                       sectionsWithMatches: [],
-                      childLists: [],
-                      childHeadings: [],
+                      branches: [],
                     },
                     {
                       text: "empty 1.1.1.2",
                       sectionsWithMatches: [],
-                      childLists: [],
-                      childHeadings: [],
+                      branches: [],
                     },
                   ],
                 },
@@ -46,25 +40,23 @@ test("collapse empty nodes with 2 leaves", () => {
       ],
     })
   ).toMatchObject({
-    childHeadings: [
+    branches: [
       {
         breadcrumbs: [
           { text: "empty 1", position: { start: { line: 1 } } },
           { text: "empty 1.1", position: { start: { line: 2 } } },
         ],
         text: "empty 1.1.1",
-        childHeadings: [
+        branches: [
           {
             text: "empty 1.1.1.1",
             sectionsWithMatches: [],
-            childLists: [],
-            childHeadings: [],
+            branches: [],
           },
           {
             text: "empty 1.1.1.2",
             sectionsWithMatches: [],
-            childLists: [],
-            childHeadings: [],
+            branches: [],
           },
         ],
       },
@@ -77,25 +69,26 @@ test("collapse empty list items", () => {
     collapseEmptyNodes({
       text: "file",
       sectionsWithMatches: [],
-      childHeadings: [],
-      childLists: [
+      branches: [
         {
           text: "empty 1",
-          listItemCache: { position: { start: { line: 1 } } },
-          childLists: [
+          cacheItem: { position: { start: { line: 1 } } },
+          branches: [
             {
               text: "empty 1.1",
-              listItemCache: { position: { start: { line: 2 } } },
-              childLists: [
+              cacheItem: { position: { start: { line: 2 } } },
+              branches: [
                 {
                   text: "empty 1.1.1",
-                  listItemCache: { position: { start: { line: 3 } } },
-                  childLists: [
+                  cacheItem: { position: { start: { line: 3 } } },
+                  branches: [
                     {
                       text: "empty 1.1.1.1",
+                      branches: [],
                     },
                     {
                       text: "empty 1.1.1.2",
+                      branches: [],
                     },
                   ],
                 },
@@ -106,7 +99,7 @@ test("collapse empty list items", () => {
       ],
     })
   ).toMatchObject({
-    childLists: [
+    branches: [
       {
         breadcrumbs: [{ text: "empty 1" }, { text: "empty 1.1" }],
         text: "empty 1.1.1",
