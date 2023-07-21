@@ -175,7 +175,7 @@ export class Patcher {
     const mountPoint = createDiv();
 
     // todo: remove the hack for file names
-   
+
     renderContextTree({
       highlights,
       contextTrees: [dedupedTree],
