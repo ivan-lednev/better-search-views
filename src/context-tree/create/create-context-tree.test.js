@@ -592,14 +592,17 @@ and this is the well
     childHeadings: [
       {
         text: "H1",
-        sectionsWithMatches: [
+        childHeadings: [
           {
-            text: `## H2 [[target]]
-this is the water
+            text: `H2 [[target]]`,
+            sectionsWithMatches: [
+              {
+                text: `this is the water
 and this is the well`,
+              },
+            ],
           },
         ],
-        childHeadings: [],
       },
     ],
   });
