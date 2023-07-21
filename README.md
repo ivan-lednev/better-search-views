@@ -34,7 +34,7 @@ The plugin brings more outliner goodness into Obsidian: it improves search views
 
 ![image](./src/click-demo.gif)
 
-### Hovering over any elemetn with the control key pressed triggers a pop-up
+### Hovering over any element with the control key pressed triggers a pop-up
 
 ![image](./src/hover-demo.gif)
 
