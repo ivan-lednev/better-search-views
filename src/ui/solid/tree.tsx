@@ -1,30 +1,12 @@
-import { createEffect, createSignal, For } from "solid-js";
+import { createEffect, For } from "solid-js";
 import { Branch } from "./branch";
 import { produce } from "immer";
-import { CacheItem, FileStats } from "obsidian";
-import {
-  Breadcrumb,
-  HeadingContextTree,
-  ListContextTree,
-  SectionWithMatch,
-} from "../../context-tree/types";
+import { ContextTree } from "../../context-tree/types";
 import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 import Mark from "mark.js";
 
-
-export interface AnyTree {
-  breadcrumbs?: Breadcrumb[];
-  text: string;
-  sectionsWithMatches: SectionWithMatch[];
-  childLists?: ListContextTree[];
-  childHeadings?: HeadingContextTree[];
-  filePath?: string;
-  cache?: CacheItem;
-  stat?: FileStats;
-}
-
 interface TreeProps {
-  fileContextTrees: AnyTree[];
+  fileContextTrees: ContextTree[];
   highlights: string[];
 }
 

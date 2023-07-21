@@ -1,23 +1,22 @@
-import { createEffect, createSignal, For, Show } from "solid-js";
+import { For, Show } from "solid-js";
 import { Title } from "./title";
-import { AnyTree } from "./tree";
 import { MatchSection } from "./match-section";
 import { CircleIcon } from "./icons/circle-icon";
+import { ContextTree } from "../../context-tree/types";
 
 interface BranchProps {
-  contextTree?: AnyTree;
-  type?: "list" | "heading";
+  contextTree: ContextTree;
 }
 
 export function Branch(props: BranchProps) {
   const breadcrumbs = () => {
     const breadcrumbForBranch = {
       text: props.contextTree.text,
-      // todo: replace with .cache
-      position:
-        props.contextTree?.headingCache?.position ||
-        props.contextTree?.listItemCache?.position,
+      type: props.contextTree.type,
+      position: props.contextTree.cacheItem.position,
     };
+    // @ts-ignore
+    // todo: add breadcrumbs to type
     return props.contextTree.breadcrumbs
       ? [...props.contextTree.breadcrumbs, breadcrumbForBranch]
       : [breadcrumbForBranch];
@@ -34,7 +33,6 @@ export function Branch(props: BranchProps) {
             </div>
             <Title
               breadcrumbs={breadcrumbs()}
-              type={props.type}
               contextTree={props.contextTree}
             />
           </div>
@@ -43,23 +41,8 @@ export function Branch(props: BranchProps) {
           <MatchSection
             sectionsWithMatches={props.contextTree.sectionsWithMatches}
           />
-          <For each={props.contextTree.childLists}>
-            {(list) => (
-              <Branch
-                contextTree={list}
-                type="list"
-                initialCollapseResults={props.initialCollapseResults}
-              />
-            )}
-          </For>
-          <For each={props.contextTree.childHeadings}>
-            {(list) => (
-              <Branch
-                contextTree={list}
-                type="heading"
-                initialCollapseResults={props.initialCollapseResults}
-              />
-            )}
+          <For each={props.contextTree.branches}>
+            {(branch) => <Branch contextTree={branch} />}
           </For>
         </div>
       </div>

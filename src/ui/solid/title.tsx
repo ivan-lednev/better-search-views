@@ -1,16 +1,13 @@
-import { For, Index, Match, Show, Switch } from "solid-js";
+import { For, Match, Switch } from "solid-js";
 import { usePluginContext } from "./plugin-context";
-import { AnyTree } from "./tree";
 import { ListIcon } from "./icons/list-icon";
 import { ArrowRightIcon } from "./icons/arrow-right-icon";
 import { HeadingIcon } from "./icons/heading-icon";
-import { Breadcrumb } from "../../context-tree/types";
-import { Pos } from "obsidian";
+import { Breadcrumb, ContextTree } from "../../context-tree/types";
 
 interface TitleProps {
   breadcrumbs: Breadcrumb[];
-  contextTree: AnyTree;
-  type?: "list" | "heading";
+  contextTree: ContextTree;
 }
 
 function removeListToken(text: string) {
@@ -20,8 +17,6 @@ function removeListToken(text: string) {
 export function Title(props: TitleProps) {
   const { handleClick, handleMouseover } = usePluginContext();
 
-  // todo: clean this up. It can be shorter
-  // todo: remove duplication
   return (
     <div class="better-search-views-titles-container">
       <For each={props.breadcrumbs}>
@@ -40,40 +35,31 @@ export function Title(props: TitleProps) {
             );
 
           return (
-            <Switch
-              fallback={
-                <div>Unknown breadcrumb type: {JSON.stringify(breadcrumb)}</div>
-              }
-            >
-              <Match when={props.type === "list"}>
-                <div class="tree-item-inner">
-                  <div
-                    class="better-search-views-breadcrumb-container"
-                    onClick={handleTitleClick}
-                    onMouseOver={handleTitleMouseover}
-                  >
-                    <div class="better-search-views-breadcrumb-token">
-                      {i() === 0 ? <ListIcon /> : <ArrowRightIcon />}
-                    </div>
-                    <div>{removeListToken(breadcrumb.text)}</div>
-                  </div>
+            <div class="tree-item-inner">
+              <div
+                class="better-search-views-breadcrumb-container"
+                onClick={handleTitleClick}
+                onMouseOver={handleTitleMouseover}
+              >
+                <div class="better-search-views-breadcrumb-token">
+                  <Switch fallback={<ArrowRightIcon />}>
+                    <Match
+                      when={
+                        breadcrumb.type === "list" &&
+                        (i() === 0 ||
+                          props.breadcrumbs[i() - 1]?.type === "heading")
+                      }
+                    >
+                      <ListIcon />
+                    </Match>
+                    <Match when={i() === 0 && breadcrumb.type === "heading"}>
+                      <HeadingIcon />
+                    </Match>
+                  </Switch>
                 </div>
-              </Match>
-              <Match when={props.type === "heading"}>
-                <div class="tree-item-inner">
-                  <div
-                    class="better-search-views-breadcrumb-container"
-                    onClick={handleTitleClick}
-                    onMouseOver={handleTitleMouseover}
-                  >
-                    <div class="better-search-views-breadcrumb-token">
-                      {i() === 0 ? <HeadingIcon /> : <ArrowRightIcon />}
-                    </div>
-                    <div>{breadcrumb.text}</div>
-                  </div>
-                </div>
-              </Match>
-            </Switch>
+                <div>{removeListToken(breadcrumb.text)}</div>
+              </div>
+            </div>
           );
         }}
       </For>

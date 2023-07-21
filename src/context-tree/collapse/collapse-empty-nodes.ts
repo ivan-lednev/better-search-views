@@ -11,6 +11,7 @@ export function collapseEmptyNodes(contextTree: ContextTree) {
     ) {
       const breadcrumbFromBranch = {
         text: branch.text,
+        type: branch.type,
         position: branch.cacheItem.position,
       };
 

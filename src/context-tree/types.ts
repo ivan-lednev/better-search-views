@@ -7,6 +7,7 @@ import {
   Pos,
   SectionCache,
 } from "obsidian";
+import { Tree } from "istanbul-lib-report";
 
 export interface createContextTreeProps {
   // todo: better naming. Separate metadata cache?
@@ -41,5 +42,6 @@ export interface ContextTree {
 
 export interface Breadcrumb {
   text: string;
+  type: TreeType;
   position: Pos;
 }

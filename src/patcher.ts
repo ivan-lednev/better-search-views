@@ -157,7 +157,6 @@ export class Patcher {
     const { file } = container;
 
     if (file.extension === "canvas") {
-      console.log({ match });
       return;
     }
 
@@ -176,7 +175,7 @@ export class Patcher {
     const mountPoint = createDiv();
 
     // todo: remove the hack for file names
-
+   
     renderContextTree({
       highlights,
       contextTrees: [dedupedTree],
