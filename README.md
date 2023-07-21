@@ -20,6 +20,10 @@ Global search looks like this:
 And here's backlinks in document:
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/2f5229bc-8d3d-4027-b01c-fa36d5872716)
 
+Embedded queries:
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/bdf7fb5d-dcc2-4067-9abb-9c2064c09a27)
+
+
 Clicking on breadcrumbs works just as you might expect:
 
 
