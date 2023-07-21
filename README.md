@@ -14,18 +14,25 @@ The plugin brings more outliner goodnes into Obsidian: it improves search views 
 - If the match is in a list item, it displays all the sub-list items below it
 - If the match is in a heading, it displays the first section below the heading (you know, for context)
 
-Global search looks like this:
+### Global search looks like this
+
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/94ee1165-4ee3-4af9-8031-fb4b7f13588c)
 
-And here's backlinks in document:
+### And here's backlinks in document
+
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/2f5229bc-8d3d-4027-b01c-fa36d5872716)
 
-Embedded queries:
+### Embedded queries
+
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/bdf7fb5d-dcc2-4067-9abb-9c2064c09a27)
 
+### Clicking on breadcrumbs works just as you might expect
 
-Clicking on breadcrumbs works just as you might expect:
+![image](./src/click-demo.gif)
 
+### Hovering over any elemetn with the control key pressed triggers a pop-up
+
+![image](./src/hover-demo.gif)
 
 ## How to use it
 
