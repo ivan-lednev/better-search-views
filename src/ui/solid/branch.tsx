@@ -2,10 +2,10 @@ import { For, Show } from "solid-js";
 import { Title } from "./title";
 import { MatchSection } from "./match-section";
 import { CircleIcon } from "./icons/circle-icon";
-import { ContextTree } from "../../context-tree/types";
+import { CollapsedContextTree } from "../../context-tree/types";
 
 interface BranchProps {
-  contextTree: ContextTree;
+  contextTree: CollapsedContextTree;
 }
 
 export function Branch(props: BranchProps) {
@@ -15,8 +15,6 @@ export function Branch(props: BranchProps) {
       type: props.contextTree.type,
       position: props.contextTree.cacheItem.position,
     };
-    // @ts-ignore
-    // todo: add breadcrumbs to type
     return props.contextTree.breadcrumbs
       ? [...props.contextTree.breadcrumbs, breadcrumbForBranch]
       : [breadcrumbForBranch];

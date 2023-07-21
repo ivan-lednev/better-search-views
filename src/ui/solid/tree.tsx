@@ -1,7 +1,7 @@
-import { createEffect, For } from "solid-js";
+import { Accessor, createEffect, For } from "solid-js";
 import { Branch } from "./branch";
 import { produce } from "immer";
-import { ContextTree } from "../../context-tree/types";
+import { CollapsedContextTree, ContextTree } from "../../context-tree/types";
 import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 import Mark from "mark.js";
 
@@ -11,7 +11,7 @@ interface TreeProps {
 }
 
 export function Tree(props: TreeProps) {
-  const collapsedTrees = () =>
+  const collapsedTrees: Accessor<CollapsedContextTree[]> = () =>
     props.fileContextTrees.map((tree) =>
       produce(tree, (draft) => {
         collapseEmptyNodes(draft);

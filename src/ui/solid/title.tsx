@@ -4,6 +4,7 @@ import { ListIcon } from "./icons/list-icon";
 import { ArrowRightIcon } from "./icons/arrow-right-icon";
 import { HeadingIcon } from "./icons/heading-icon";
 import { Breadcrumb, ContextTree } from "../../context-tree/types";
+import { listItemToken } from "../../patterns";
 
 interface TitleProps {
   breadcrumbs: Breadcrumb[];
@@ -11,7 +12,7 @@ interface TitleProps {
 }
 
 function removeListToken(text: string) {
-  return text.trim().replace(/^-\s+/, "");
+  return text.trim().replace(listItemToken, "");
 }
 
 export function Title(props: TitleProps) {

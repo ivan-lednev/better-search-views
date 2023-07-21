@@ -38,6 +38,10 @@ export interface ContextTree {
   stat: FileStats;
 }
 
+export interface CollapsedContextTree extends ContextTree {
+  breadcrumbs?: Breadcrumb[];
+}
+
 export interface Breadcrumb {
   text: string;
   type: TreeType;
