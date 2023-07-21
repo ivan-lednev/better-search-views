@@ -1,18 +1,49 @@
-import "obsidian";
-import { ViewCreator } from "obsidian";
+import {
+  CacheItem,
+  FileStats,
+  HeadingCache,
+  LinkCache,
+  ListItemCache,
+  Pos,
+  SectionCache,
+} from "obsidian";
 
-declare module "obsidian" {
-  export interface ViewRegistry {
-    registerView(
-      type: string,
-      viewCreator: ViewCreator,
-      ...args: unknown[]
-    ): void;
-  }
+export interface createContextTreeProps {
+  // todo: better naming. Separate metadata cache?
+  positions: LinkCache[];
+  stat: FileStats;
+  fileContents: string;
+  filePath: string;
+  listItems?: ListItemCache[];
+  headings?: HeadingCache[];
+  sections?: SectionCache[];
+}
 
-  interface SearchView {}
+export interface SectionWithMatch {
+  text: string;
+  cache: SectionCache;
+  filePath: string;
+  match?: { position: Pos };
+}
 
-  export interface App {
-    viewRegistry: ViewRegistry;
-  }
+export type TreeType = "heading" | "list" | "file";
+
+export interface ContextTree {
+  text: string;
+  filePath: string;
+  type: TreeType;
+  branches: ContextTree[];
+  sectionsWithMatches: SectionWithMatch[];
+  cacheItem: CacheItem;
+  stat: FileStats;
+}
+
+export interface CollapsedContextTree extends ContextTree {
+  breadcrumbs?: Breadcrumb[];
+}
+
+export interface Breadcrumb {
+  text: string;
+  type: TreeType;
+  position: Pos;
 }

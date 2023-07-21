@@ -1,5 +1,5 @@
 import { CacheItem, FileStats } from "obsidian";
-import { ContextTree, createContextTreeProps, TreeType } from "../types";
+import { ContextTree, createContextTreeProps, TreeType } from "../../types";
 import {
   getHeadingBreadcrumbs,
   getHeadingIndexContaining,

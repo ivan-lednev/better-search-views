@@ -3,7 +3,7 @@ import { usePluginContext } from "./plugin-context";
 import { ListIcon } from "./icons/list-icon";
 import { ArrowRightIcon } from "./icons/arrow-right-icon";
 import { HeadingIcon } from "./icons/heading-icon";
-import { Breadcrumb, ContextTree } from "../../context-tree/types";
+import { Breadcrumb, ContextTree } from "../../types";
 import { listItemToken } from "../../patterns";
 
 interface TitleProps {

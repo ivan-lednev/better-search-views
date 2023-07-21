@@ -8,14 +8,7 @@ import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
-import {
-  FileContextTree,
-  ContextTree,
-  HeadingContextTree,
-  ListContextTree,
-  SectionWithMatch,
-  ContextTree,
-} from "./context-tree/types";
+import { ContextTree, SectionWithMatch } from "./types";
 import { produce } from "immer";
 
 const errorTimeout = 10000;

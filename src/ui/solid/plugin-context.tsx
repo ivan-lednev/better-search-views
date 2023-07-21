@@ -1,5 +1,5 @@
 import { JSX, createContext, useContext } from "solid-js";
-import { Keymap, MarkdownView } from "obsidian";
+import { Keymap, MarkdownView, Notice } from "obsidian";
 import BetterBacklinksPlugin from "../../plugin";
 
 interface PluginContextProps {
@@ -19,40 +19,36 @@ export function PluginContextProvider(props: PluginContextProps) {
   const handleClick = async (path: string, line: number) => {
     const file = app.metadataCache.getFirstLinkpathDest(path, path);
 
+    if (!file) {
+      new Notice(`File ${path} does not exist`);
+      return;
+    }
+
     await props.plugin.app.workspace.getLeaf(false).openFile(file);
 
-    if (!Number.isInteger(line)) {
+    const activeMarkdownView =
+      props.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+
+    if (!activeMarkdownView) {
+      new Notice(`Failed to open file ${path}. Can't scroll to line ${line}`);
       return;
     }
 
     // Sometimes it works but still throws errors
     try {
-      props.plugin.app.workspace
-        .getActiveViewOfType(MarkdownView)
-        .setEphemeralState({ line });
+      activeMarkdownView.setEphemeralState({ line });
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleMouseover = (event: PointerEvent, path: string, line: number) => {
-    if (
-      // @ts-ignore
-      !props.plugin.app.internalPlugins.plugins["page-preview"].enabled
-    ) {
+    // @ts-ignore
+    if (!props.plugin.app.internalPlugins.plugins["page-preview"].enabled) {
       return;
     }
 
-    // todo: tidy this up
-    const hoverMetaKeyRequired =
-      // @ts-ignore
-      app.internalPlugins.plugins["page-preview"].instance.overrides[
-        "obsidian42-strange-new-worlds"
-      ] != false;
-    if (
-      hoverMetaKeyRequired === false ||
-      (hoverMetaKeyRequired === true && Keymap.isModifier(event, "Mod"))
-    ) {
+    if (Keymap.isModifier(event, "Mod")) {
       const target = event.target as HTMLElement;
       const previewLocation = {
         scroll: line,

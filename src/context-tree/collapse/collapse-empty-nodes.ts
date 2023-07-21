@@ -1,4 +1,4 @@
-import { Breadcrumb, ContextTree } from "../types";
+import { Breadcrumb, ContextTree } from "../../types";
 
 export function collapseEmptyNodes(contextTree: ContextTree) {
   function recursive(

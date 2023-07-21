@@ -1,7 +1,7 @@
 import { For, Show } from "solid-js";
 import { MarkdownRenderer } from "obsidian";
 import { usePluginContext } from "./plugin-context";
-import { SectionWithMatch } from "../../context-tree/types";
+import { SectionWithMatch } from "../../types";
 
 interface MatchSectionProps {
   sectionsWithMatches: SectionWithMatch[];

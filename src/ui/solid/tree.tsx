@@ -1,7 +1,7 @@
 import { Accessor, createEffect, For } from "solid-js";
 import { Branch } from "./branch";
 import { produce } from "immer";
-import { CollapsedContextTree, ContextTree } from "../../context-tree/types";
+import { CollapsedContextTree, ContextTree } from "../../types";
 import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 import Mark from "mark.js";
 

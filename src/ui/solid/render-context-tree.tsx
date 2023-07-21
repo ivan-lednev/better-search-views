@@ -1,7 +1,7 @@
 import { render } from "solid-js/web";
 import { PluginContextProvider } from "./plugin-context";
 import { Tree } from "./tree";
-import { FileContextTree, ContextTree } from "../../context-tree/types";
+import { ContextTree } from "../../types";
 import BetterBacklinksPlugin from "../../plugin";
 
 interface RenderContextTreeProps {

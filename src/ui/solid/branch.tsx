@@ -2,7 +2,7 @@ import { For, Show } from "solid-js";
 import { Title } from "./title";
 import { MatchSection } from "./match-section";
 import { CircleIcon } from "./icons/circle-icon";
-import { CollapsedContextTree } from "../../context-tree/types";
+import { CollapsedContextTree } from "../../types";
 
 interface BranchProps {
   contextTree: CollapsedContextTree;
