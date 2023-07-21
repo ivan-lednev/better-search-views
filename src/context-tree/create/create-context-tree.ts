@@ -1,15 +1,5 @@
-import { CacheItem, FileStats, HeadingCache, ListItemCache } from "obsidian";
-import {
-  createContextTreeProps,
-  FileContextTree,
-  FileTree,
-  HeadingContextTree,
-  ListContextTree,
-  SectionWithMatch,
-  Tree,
-  TreeType,
-  TreeWithoutCache,
-} from "../types";
+import { CacheItem, FileStats } from "obsidian";
+import { ContextTree, createContextTreeProps, TreeType } from "../types";
 import {
   getHeadingBreadcrumbs,
   getHeadingIndexContaining,
@@ -48,7 +38,9 @@ export function createContextTree({
     };
   });
 
-  const root = createFileContextTree(filePath, stat);
+  // todo: remove cache from file tree
+  // @ts-ignore
+  const root = createContextTreeBranch("file", {}, stat, filePath, filePath);
 
   for (const {
     headingBreadcrumbs,
@@ -56,7 +48,7 @@ export function createContextTree({
     sectionCache,
     position,
   } of positionsWithContext) {
-    let context: TreeWithoutCache = root;
+    let context: ContextTree = root;
 
     for (const headingCache of headingBreadcrumbs) {
       const headingFoundInChildren = context.branches.find((tree) =>
@@ -66,9 +58,10 @@ export function createContextTree({
       if (headingFoundInChildren) {
         context = headingFoundInChildren;
       } else {
-        const newContext: Tree = createContextTreeBranch(
+        const newContext: ContextTree = createContextTreeBranch(
           "heading",
           headingCache,
+          stat,
           filePath,
           headingCache.heading
         );
@@ -86,9 +79,10 @@ export function createContextTree({
       if (listItemFoundInChildren) {
         context = listItemFoundInChildren;
       } else {
-        const newListContext: Tree = createContextTreeBranch(
+        const newListContext: ContextTree = createContextTreeBranch(
           "list",
           listItemCache,
+          stat,
           filePath,
           getTextAtPosition(fileContents, listItemCache.position)
         );
@@ -162,20 +156,10 @@ export function createContextTree({
   return root;
 }
 
-function createFileContextTree(filePath: string, stat: FileStats): FileTree {
-  return {
-    type: "file",
-    text: filePath,
-    filePath,
-    stat,
-    sectionsWithMatches: [],
-    branches: [],
-  };
-}
-
 function createContextTreeBranch(
   type: TreeType,
   cacheItem: CacheItem,
+  stat: FileStats,
   filePath: string,
   text: string
 ) {
@@ -184,6 +168,7 @@ function createContextTreeBranch(
     cacheItem,
     filePath,
     text,
+    stat,
     branches: [],
     sectionsWithMatches: [],
   };

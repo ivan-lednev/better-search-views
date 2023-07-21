@@ -27,53 +27,19 @@ export interface SectionWithMatch {
   match?: { position: Pos };
 }
 
-export interface WithListChildren {
-  text: string;
-  sectionsWithMatches: SectionWithMatch[];
-  childLists: ListContextTree[];
-}
-
-export interface WithAnyChildren extends WithListChildren {
-  childHeadings: HeadingContextTree[];
-  branches;
-}
-
-export interface FileContextTree extends WithAnyChildren {
-  filePath?: string;
-  stat: FileStats;
-}
-
-export interface HeadingContextTree extends WithAnyChildren {
-  headingCache: HeadingCache;
-  filePath: string;
-}
-
 export type TreeType = "heading" | "list" | "file";
 
-export interface TreeWithoutCache {
+export interface ContextTree {
   text: string;
   filePath: string;
   type: TreeType;
-  branches: Tree[];
+  branches: ContextTree[];
   sectionsWithMatches: SectionWithMatch[];
-}
-
-// todo: seriously? TreeWithoutCache?
-export interface Tree extends TreeWithoutCache {
   cacheItem: CacheItem;
-}
-
-export interface FileTree extends TreeWithoutCache {
-  type: "file";
   stat: FileStats;
 }
 
 export interface Breadcrumb {
   text: string;
   position: Pos;
-}
-
-export interface ListContextTree extends WithListChildren {
-  listItemCache: ListItemCache;
-  filePath: string;
 }

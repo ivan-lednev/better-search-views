@@ -10,11 +10,11 @@ import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
 import {
   FileContextTree,
-  FileTree,
+  ContextTree,
   HeadingContextTree,
   ListContextTree,
   SectionWithMatch,
-  Tree,
+  ContextTree,
 } from "./context-tree/types";
 import { produce } from "immer";
 
@@ -202,7 +202,7 @@ function dedupe(matches: SectionWithMatch[]) {
   );
 }
 
-function dedupeMatchesRecursively(tree: Tree) {
+function dedupeMatchesRecursively(tree: ContextTree) {
   tree.sectionsWithMatches = dedupe(tree.sectionsWithMatches);
 
   tree.branches = tree.branches.map((branch) =>

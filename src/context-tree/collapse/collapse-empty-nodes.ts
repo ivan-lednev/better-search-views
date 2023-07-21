@@ -1,11 +1,10 @@
-import {
-  Breadcrumb,
-  Tree,
-  TreeWithoutCache,
-} from "../types";
+import { Breadcrumb, ContextTree } from "../types";
 
-export function collapseEmptyNodes(contextTree: TreeWithoutCache) {
-  function recursive(branch: Tree, breadcrumbsFromParent?: Breadcrumb[]): Tree {
+export function collapseEmptyNodes(contextTree: ContextTree) {
+  function recursive(
+    branch: ContextTree,
+    breadcrumbsFromParent?: Breadcrumb[]
+  ): ContextTree {
     if (
       !branch?.sectionsWithMatches?.length &&
       branch?.branches?.length === 1
