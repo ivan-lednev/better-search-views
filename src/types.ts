@@ -52,3 +52,7 @@ export type MouseOverEvent = MouseEvent & {
   currentTarget: Element;
   target: Element;
 };
+
+export interface Disposer {
+  (): void;
+}

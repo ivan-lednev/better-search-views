@@ -10,6 +10,7 @@ import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
 import { ContextTree, SectionWithMatch } from "./types";
 import { produce } from "immer";
+import { DisposerRegistry } from "./disposer-registry";
 
 const errorTimeout = 10000;
 
@@ -27,11 +28,11 @@ export class Patcher {
   private currentNotice: Notice;
   private searchResultItemPatched = false;
   private renderContentMatchesPatched = false;
-  private disposeHandlers: Array<() => void> = [];
+  private readonly disposerRegistry = new DisposerRegistry();
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
 
-  patchSearchView() {
+  patchComponent() {
     const patcher = this;
     this.plugin.register(
       around(Component.prototype, {
@@ -57,6 +58,8 @@ export class Patcher {
       around(searchResultDom.constructor.prototype, {
         addResult(old: any) {
           return function (...args: any[]) {
+            patcher.disposerRegistry.onAddResult(this);
+
             const result = old.call(this, ...args);
 
             if (!patcher.renderContentMatchesPatched) {
@@ -69,8 +72,7 @@ export class Patcher {
         },
         emptyResults(old: any) {
           return function (...args: any[]) {
-            patcher.disposeHandlers.forEach((handler) => handler());
-            patcher.disposeHandlers = [];
+            patcher.disposerRegistry.onEmptyResults(this);
 
             return old.call(this, ...args);
           };
@@ -185,7 +187,7 @@ export class Patcher {
       plugin: this.plugin,
     });
 
-    this.disposeHandlers.push(dispose)
+    this.disposerRegistry.addOnEmptyResultsCallback(dispose);
 
     match.el = mountPoint;
   }
