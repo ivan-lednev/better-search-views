@@ -35,6 +35,13 @@ export function Title(props: TitleProps) {
               breadcrumb.position.start.line
             );
 
+          const previousIsHeading =
+            props.breadcrumbs[i() - 1]?.type === "heading";
+          const isFirstListItemInBreadcrumbs =
+            breadcrumb.type === "list" && (i() === 0 || previousIsHeading);
+          const isFirstHeadingInBreadcrumbs =
+            i() === 0 && breadcrumb.type === "heading";
+
           return (
             <div class="tree-item-inner">
               <div
@@ -44,16 +51,10 @@ export function Title(props: TitleProps) {
               >
                 <div class="better-search-views-breadcrumb-token">
                   <Switch fallback={<ArrowRightIcon />}>
-                    <Match
-                      when={
-                        breadcrumb.type === "list" &&
-                        (i() === 0 ||
-                          props.breadcrumbs[i() - 1]?.type === "heading")
-                      }
-                    >
+                    <Match when={isFirstListItemInBreadcrumbs}>
                       <ListIcon />
                     </Match>
-                    <Match when={i() === 0 && breadcrumb.type === "heading"}>
+                    <Match when={isFirstHeadingInBreadcrumbs}>
                       <HeadingIcon />
                     </Match>
                   </Switch>
