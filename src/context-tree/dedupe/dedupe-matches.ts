@@ -1,12 +1,12 @@
 import { ContextTree, SectionWithMatch } from "../../types";
 import { isSamePosition } from "../../metadata-cache-util/position";
 
-export function dedupeMatches(tree: ContextTree) {
-  tree.sectionsWithMatches = dedupe(tree.sectionsWithMatches);
-
-  tree.branches = tree.branches.map((branch) => dedupeMatches(branch));
-
-  return tree;
+export function dedupeMatches(tree: ContextTree): ContextTree {
+  return {
+    ...tree,
+    sectionsWithMatches: dedupe(tree.sectionsWithMatches),
+    branches: tree.branches.map((branch) => dedupeMatches(branch)),
+  };
 }
 
 function areMatchesInSameSection(a: SectionWithMatch, b: SectionWithMatch) {
