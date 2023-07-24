@@ -20,6 +20,7 @@ The plugin brings more outliner goodness into Obsidian: it improves search views
 
 ### Global search looks like this
 
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/844d217f-2c70-42fa-83a3-d38d81294f6a)
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/94ee1165-4ee3-4af9-8031-fb4b7f13588c)
 
 ### And here's backlinks in document
