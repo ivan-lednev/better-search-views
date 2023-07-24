@@ -33,11 +33,11 @@ The plugin brings more outliner goodness into Obsidian: it improves search views
 
 ### Clicking on breadcrumbs works just as you might expect
 
-![image](./src/click-demo.gif)
+![image](click-demo.gif)
 
 ### Hovering over any element with the control key pressed triggers a pop-up
 
-![image](./src/hover-demo.gif)
+![image](hover-demo.gif)
 
 ## How to use it
 
