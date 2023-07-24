@@ -45,7 +45,11 @@
 .better-search-views-tree-item-children {
   margin-left: 10px;
   padding-left: 10px;
-  border-left: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
+  border-left: var(--nav-indentation-guide-width) solid var(--indentation-guide-color);
+}
+
+.better-search-views-tree-item-children:hover {
+  border-left-color: var(--indentation-guide-color-active);
 }
 
 .better-search-views-breadcrumb-container {
