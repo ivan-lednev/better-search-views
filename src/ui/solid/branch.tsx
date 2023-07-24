@@ -20,9 +20,7 @@ export function Branch(props: BranchProps) {
       type: props.contextTree.type,
       position: props.contextTree.cacheItem.position,
     };
-    return props.contextTree.breadcrumbs
-      ? [breadcrumbForBranch, ...props.contextTree.breadcrumbs]
-      : [breadcrumbForBranch];
+    return [breadcrumbForBranch, ...(props.contextTree.breadcrumbs || [])];
   };
 
   return (
