@@ -10,7 +10,7 @@ export function CircleIcon() {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="better-context-icon lucide lucide-arrow-right-circle"
+      class="better-search-views-icon lucide lucide-arrow-right-circle"
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M8 12h8" />

@@ -10,7 +10,7 @@ export function ListIcon() {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="better-context-icon lucide lucide-list"
+      class="better-search-views-icon lucide lucide-list"
     >
       <line x1="8" x2="21" y1="6" y2="6" />
       <line x1="8" x2="21" y1="12" y2="12" />

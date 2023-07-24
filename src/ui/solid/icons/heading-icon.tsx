@@ -10,7 +10,7 @@ export function HeadingIcon() {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="better-context-icon lucide lucide-heading"
+      class="better-search-views-icon lucide lucide-heading"
     >
       <path d="M6 12h12" />
       <path d="M6 20V4" />
