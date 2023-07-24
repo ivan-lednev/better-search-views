@@ -119,7 +119,8 @@ export class Patcher {
                 this,
                 firstMatch,
                 matchPositions,
-                deduped
+                deduped,
+                this.parent.infinityScroll
               );
 
               // we already mounted the whole thing to the first child, so discard the rest
@@ -149,7 +150,8 @@ export class Patcher {
     container: any,
     match: any,
     positions: any[],
-    highlights: string[]
+    highlights: string[],
+    infinityScroll: any
   ) {
     if (this.wrappedMatches.has(match)) {
       return;
@@ -185,6 +187,7 @@ export class Patcher {
       contextTrees: [dedupedTree],
       el: mountPoint,
       plugin: this.plugin,
+      infinityScroll,
     });
 
     this.disposerRegistry.addOnEmptyResultsCallback(dispose);

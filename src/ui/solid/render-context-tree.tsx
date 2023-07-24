@@ -9,6 +9,7 @@ interface RenderContextTreeProps {
   highlights: string[];
   el: HTMLElement;
   plugin: BetterBacklinksPlugin;
+  infinityScroll: any;
 }
 
 export function renderContextTree({
@@ -16,10 +17,11 @@ export function renderContextTree({
   el,
   plugin,
   highlights,
+  infinityScroll
 }: RenderContextTreeProps) {
   return render(
     () => (
-      <PluginContextProvider plugin={plugin}>
+      <PluginContextProvider plugin={plugin} infinityScroll={infinityScroll}>
         <Tree fileContextTrees={contextTrees} highlights={highlights} />
       </PluginContextProvider>
     ),

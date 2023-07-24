@@ -5,12 +5,14 @@ import { MouseOverEvent } from "../../types";
 
 interface PluginContextProps {
   plugin: BetterBacklinksPlugin;
+  infinityScroll: any;
   children: JSX.Element;
 }
 
 interface PluginContextValue {
   handleClick: (path: string, line?: number) => Promise<void>;
   handleMouseover: (event: MouseOverEvent, path: string, line?: number) => void;
+  handleHeightChange: () => void;
   plugin: BetterBacklinksPlugin;
 }
 
@@ -74,9 +76,18 @@ export function PluginContextProvider(props: PluginContextProps) {
     }
   };
 
+  const handleHeightChange = () => {
+    props.infinityScroll.invalidateAll();
+  };
+
   return (
     <PluginContext.Provider
-      value={{ handleClick, handleMouseover, plugin: props.plugin }}
+      value={{
+        handleClick,
+        handleMouseover,
+        handleHeightChange,
+        plugin: props.plugin,
+      }}
     >
       {props.children}
     </PluginContext.Provider>
