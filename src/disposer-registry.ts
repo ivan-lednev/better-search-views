@@ -4,6 +4,11 @@ export class DisposerRegistry {
   private contextDom: any;
   private domToDisposers: WeakMap<any, Array<Disposer>> = new WeakMap();
 
+  /**
+   * We assume here that match results are going to be added synchronously to the same dom, on which onAddResult is
+   * called
+   * @param searchResultDom
+   */
   onAddResult(searchResultDom: any) {
     this.contextDom = searchResultDom;
     if (!this.domToDisposers.has(this)) {
@@ -20,6 +25,10 @@ export class DisposerRegistry {
     this.domToDisposers.get(this.contextDom)?.push(fn);
   }
 
+  /**
+   * This may be called before any results are added
+   * @param searchResultDom
+   */
   onEmptyResults(searchResultDom: any) {
     this.domToDisposers.get(searchResultDom)?.forEach((disposer) => disposer());
     this.domToDisposers.set(searchResultDom, []);

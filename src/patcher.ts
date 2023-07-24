@@ -1,16 +1,13 @@
 import { Component, Notice } from "obsidian";
 import { around } from "monkey-around";
-import {
-  createPositionFromOffsets,
-  isSamePosition,
-} from "./metadata-cache-util/position";
+import { createPositionFromOffsets } from "./metadata-cache-util/position";
 import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
-import { ContextTree, SectionWithMatch } from "./types";
 import { produce } from "immer";
 import { DisposerRegistry } from "./disposer-registry";
+import { dedupeMatches } from "./context-tree/dedupe/dedupe-matches";
 
 const errorTimeout = 10000;
 
@@ -176,12 +173,11 @@ export class Patcher {
 
     contextTree.text = "";
 
-    const dedupedTree = produce(contextTree, dedupeMatchesRecursively);
+    const dedupedTree = produce(contextTree, dedupeMatches);
 
     const mountPoint = createDiv();
 
     // todo: remove the hack for file names
-
     const dispose = renderContextTree({
       highlights,
       contextTrees: [dedupedTree],
@@ -194,28 +190,4 @@ export class Patcher {
 
     match.el = mountPoint;
   }
-}
-
-function areMatchesInSameSection(a: SectionWithMatch, b: SectionWithMatch) {
-  return (
-    a.text === b.text && isSamePosition(a.cache.position, b.cache.position)
-  );
-}
-
-function dedupe(matches: SectionWithMatch[]) {
-  return matches.filter(
-    (match: SectionWithMatch, index: number, array: SectionWithMatch[]) =>
-      index ===
-      array.findIndex((inner) => areMatchesInSameSection(inner, match))
-  );
-}
-
-function dedupeMatchesRecursively(tree: ContextTree) {
-  tree.sectionsWithMatches = dedupe(tree.sectionsWithMatches);
-
-  tree.branches = tree.branches.map((branch) =>
-    dedupeMatchesRecursively(branch)
-  );
-
-  return tree;
 }
