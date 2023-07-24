@@ -13,6 +13,7 @@ export function Branch(props: BranchProps) {
   const { handleHeightChange } = usePluginContext();
   const [isHidden, setIsHidden] = createSignal(false);
 
+  // todo: this looks out of place
   const breadcrumbs = () => {
     const breadcrumbForBranch = {
       text: props.contextTree.text,
@@ -20,7 +21,7 @@ export function Branch(props: BranchProps) {
       position: props.contextTree.cacheItem.position,
     };
     return props.contextTree.breadcrumbs
-      ? [...props.contextTree.breadcrumbs, breadcrumbForBranch]
+      ? [breadcrumbForBranch, ...props.contextTree.breadcrumbs]
       : [breadcrumbForBranch];
   };
 

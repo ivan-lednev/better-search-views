@@ -1,4 +1,5 @@
 import { dedupeMatches } from "./dedupe-matches";
+import { cloneDeep } from "lodash";
 
 test("Removes neighboring identical matches without mutating the tree", () => {
   const input = {
@@ -65,11 +66,12 @@ test("Removes neighboring identical matches without mutating the tree", () => {
     ],
   };
 
+  const clone = cloneDeep(input);
+
   const deduped = dedupeMatches(input);
 
   expect(deduped.sectionsWithMatches).toHaveLength(1);
   expect(deduped.branches[0].sectionsWithMatches).toHaveLength(1);
 
-  expect(input.sectionsWithMatches).toHaveLength(2);
-  expect(input.branches[0].sectionsWithMatches).toHaveLength(2);
+  expect(input).toEqual(clone);
 });

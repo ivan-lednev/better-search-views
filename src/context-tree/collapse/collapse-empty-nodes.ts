@@ -1,38 +1,24 @@
-import { Breadcrumb, CollapsedContextTree, ContextTree } from "../../types";
+import { CollapsedContextTree } from "../../types";
 
-export function collapseEmptyNodes(contextTree: ContextTree) {
-  function recursive(
-    branch: ContextTree,
-    breadcrumbsFromParent?: Breadcrumb[]
-  ): CollapsedContextTree {
-    if (
-      !branch?.sectionsWithMatches?.length &&
-      branch?.branches?.length === 1
-    ) {
-      const breadcrumbFromBranch = {
-        text: branch.text,
-        type: branch.type,
-        position: branch.cacheItem.position,
-      };
+export function collapseEmptyNodes(
+  tree: CollapsedContextTree
+): CollapsedContextTree {
+  if (!tree?.sectionsWithMatches?.length && tree.branches.length === 1) {
+    const firstBranch = tree.branches[0];
 
-      if (breadcrumbsFromParent) {
-        breadcrumbsFromParent.push(breadcrumbFromBranch);
-      }
-      const breadcrumbs = breadcrumbsFromParent
-        ? breadcrumbsFromParent
-        : [breadcrumbFromBranch];
+    const breadcrumb = {
+      text: firstBranch.text,
+      type: firstBranch.type,
+      position: firstBranch.cacheItem?.position,
+    };
 
-      return recursive(branch.branches[0], breadcrumbs);
-    }
-
-    branch.branches = branch.branches.map((branch) => recursive(branch));
-
-    return { ...branch, breadcrumbs: breadcrumbsFromParent };
+    return collapseEmptyNodes({
+      ...tree,
+      branches: firstBranch.branches,
+      breadcrumbs: [...(tree.breadcrumbs || []), breadcrumb],
+      sectionsWithMatches: firstBranch.sectionsWithMatches,
+    });
   }
 
-  contextTree.branches = contextTree?.branches?.map((branch) =>
-    recursive(branch)
-  );
-
-  return contextTree;
+  return { ...tree, branches: tree.branches.map(collapseEmptyNodes) };
 }

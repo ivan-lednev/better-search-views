@@ -1,6 +1,5 @@
 import { Accessor, createEffect, For } from "solid-js";
 import { Branch } from "./branch";
-import { produce } from "immer";
 import { CollapsedContextTree, ContextTree } from "../../types";
 import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-nodes";
 import Mark from "mark.js";
@@ -12,11 +11,10 @@ interface TreeProps {
 
 export function Tree(props: TreeProps) {
   const collapsedTrees: Accessor<CollapsedContextTree[]> = () =>
-    props.fileContextTrees.map((tree) =>
-      produce(tree, (draft) => {
-        collapseEmptyNodes(draft);
-      })
-    );
+    props.fileContextTrees.map((fileTree) => ({
+      ...fileTree,
+      branches: fileTree.branches.map(collapseEmptyNodes),
+    }));
 
   let markContextRef: HTMLDivElement;
 

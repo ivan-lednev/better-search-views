@@ -5,7 +5,6 @@ import { createContextTree } from "./context-tree/create/create-context-tree";
 import { renderContextTree } from "./ui/solid/render-context-tree";
 import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
-import { produce } from "immer";
 import { DisposerRegistry } from "./disposer-registry";
 import { dedupeMatches } from "./context-tree/dedupe/dedupe-matches";
 
@@ -173,14 +172,12 @@ export class Patcher {
 
     contextTree.text = "";
 
-    const dedupedTree = produce(contextTree, dedupeMatches);
-
     const mountPoint = createDiv();
 
     // todo: remove the hack for file names
     const dispose = renderContextTree({
       highlights,
-      contextTrees: [dedupedTree],
+      contextTrees: [dedupeMatches(contextTree)],
       el: mountPoint,
       plugin: this.plugin,
       infinityScroll,
