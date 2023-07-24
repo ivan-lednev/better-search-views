@@ -24,7 +24,6 @@
 }
 
 /* Copied from Obsidian */
-
 .better-search-views-file-match li > ul::before {
   content: "\200B";
   position: absolute;
@@ -35,7 +34,6 @@
   border-right: var(--indentation-guide-width) solid var(--indentation-guide-color);
 }
 
-/*.embedded-backlinks .backlink-pane .tree-item-self*/
 .better-search-views-breadcrumbs {
   display: flex;
   align-items: center;
@@ -81,6 +79,10 @@
 
 .search-result-file-matches:has(.better-search-views-tree), .better-search-views-tree .search-result-file-matches {
   margin: var(--size-4-1) 0 var(--size-4-1);
+}
+
+.better-search-views-tree .search-result-file-matches {
+  margin-left: 21px;
 }
 
 .tree-item.search-result > .search-result-file-matches:has(.better-search-views-tree) {
@@ -163,4 +165,8 @@ body:not(.is-grabbing) .better-search-views-tree .tree-item-self.search-result-f
 
 .markdown-source-view.mod-cm6 .better-search-views-tree .task-list-item-checkbox {
   margin-inline-start: calc(var(--checkbox-size) * -1.5);
+}
+
+.better-search-views-is-hidden {
+  display: none;
 }

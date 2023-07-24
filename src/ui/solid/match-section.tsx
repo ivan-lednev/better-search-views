@@ -17,7 +17,7 @@ export function MatchSection(props: MatchSectionProps) {
 
   return (
     <Show when={props.sectionsWithMatches.length > 0}>
-      <div class="search-result-file-matches better-search-views-ref-item-collection-items">
+      <div class="search-result-file-matches">
         <For each={props.sectionsWithMatches}>
           {(section, index) => {
             const line = section.cache.position.start.line;

@@ -47,12 +47,10 @@ export function Branch(props: BranchProps) {
             />
           </div>
         </Show>
-        <div style={{ display: isHidden() ? "none" : "block" }}>
-          <div style={{ "margin-left": "21px" }}>
-            <MatchSection
-              sectionsWithMatches={props.contextTree.sectionsWithMatches}
-            />
-          </div>
+        <div class={isHidden() ? "better-search-views-is-hidden" : ""}>
+          <MatchSection
+            sectionsWithMatches={props.contextTree.sectionsWithMatches}
+          />
           <div class="better-search-views-tree-item-children">
             <For each={props.contextTree.branches}>
               {(branch) => <Branch contextTree={branch} />}
