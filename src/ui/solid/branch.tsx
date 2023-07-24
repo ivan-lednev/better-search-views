@@ -26,39 +26,33 @@ export function Branch(props: BranchProps) {
   };
 
   return (
-    <Show when={props.contextTree}>
-      <div class="tree-item search-result better-search-views-tree">
-        {/* TODO: fix this hack for file names */}
-        <Show when={breadcrumbs().some((b) => b.text.length > 0)}>
-          <div class="tree-item-self search-result-file-title is-clickable">
-            <div
-              class={`tree-item-icon collapse-icon ${
-                isHidden() ? "is-collapsed" : ""
-              }`}
-              onClick={() => {
-                setIsHidden(!isHidden());
-                handleHeightChange();
-              }}
-            >
-              <CollapseIcon />
-            </div>
-            <Title
-              breadcrumbs={breadcrumbs()}
-              contextTree={props.contextTree}
-            />
+    <div class="tree-item search-result better-search-views-tree">
+      <Show when={props.contextTree.type !== "file"}>
+        <div class="tree-item-self search-result-file-title is-clickable">
+          <div
+            class={`tree-item-icon collapse-icon ${
+              isHidden() ? "is-collapsed" : ""
+            }`}
+            onClick={() => {
+              setIsHidden(!isHidden());
+              handleHeightChange();
+            }}
+          >
+            <CollapseIcon />
           </div>
-        </Show>
-        <div class={isHidden() ? "better-search-views-is-hidden" : ""}>
-          <MatchSection
-            sectionsWithMatches={props.contextTree.sectionsWithMatches}
-          />
-          <div class="better-search-views-tree-item-children">
-            <For each={props.contextTree.branches}>
-              {(branch) => <Branch contextTree={branch} />}
-            </For>
-          </div>
+          <Title breadcrumbs={breadcrumbs()} contextTree={props.contextTree} />
+        </div>
+      </Show>
+      <div class={isHidden() ? "better-search-views-is-hidden" : ""}>
+        <MatchSection
+          sectionsWithMatches={props.contextTree.sectionsWithMatches}
+        />
+        <div class="better-search-views-tree-item-children">
+          <For each={props.contextTree.branches}>
+            {(branch) => <Branch contextTree={branch} />}
+          </For>
         </div>
       </div>
-    </Show>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { ContextTree } from "../../types";
 import BetterBacklinksPlugin from "../../plugin";
 
 interface RenderContextTreeProps {
-  contextTrees: ContextTree[];
+  contextTree: ContextTree;
   highlights: string[];
   el: HTMLElement;
   plugin: BetterBacklinksPlugin;
@@ -13,7 +13,7 @@ interface RenderContextTreeProps {
 }
 
 export function renderContextTree({
-  contextTrees,
+  contextTree,
   el,
   plugin,
   highlights,
@@ -22,7 +22,7 @@ export function renderContextTree({
   return render(
     () => (
       <PluginContextProvider plugin={plugin} infinityScroll={infinityScroll}>
-        <Tree fileContextTrees={contextTrees} highlights={highlights} />
+        <Tree fileContextTree={contextTree} highlights={highlights} />
       </PluginContextProvider>
     ),
     el

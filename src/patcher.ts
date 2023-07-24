@@ -170,14 +170,11 @@ export class Patcher {
       ...cache,
     });
 
-    contextTree.text = "";
-
     const mountPoint = createDiv();
 
-    // todo: remove the hack for file names
     const dispose = renderContextTree({
       highlights,
-      contextTrees: [dedupeMatches(contextTree)],
+      contextTree: dedupeMatches(contextTree),
       el: mountPoint,
       plugin: this.plugin,
       infinityScroll,

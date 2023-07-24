@@ -5,16 +5,15 @@ import { collapseEmptyNodes } from "../../context-tree/collapse/collapse-empty-n
 import Mark from "mark.js";
 
 interface TreeProps {
-  fileContextTrees: ContextTree[];
+  fileContextTree: ContextTree;
   highlights: string[];
 }
 
 export function Tree(props: TreeProps) {
-  const collapsedTrees: Accessor<CollapsedContextTree[]> = () =>
-    props.fileContextTrees.map((fileTree) => ({
-      ...fileTree,
-      branches: fileTree.branches.map(collapseEmptyNodes),
-    }));
+  const collapsedTree: Accessor<CollapsedContextTree> = () => ({
+    ...props.fileContextTree,
+    branches: props.fileContextTree.branches.map(collapseEmptyNodes),
+  });
 
   let markContextRef: HTMLDivElement;
 
@@ -30,9 +29,7 @@ export function Tree(props: TreeProps) {
   return (
     // @ts-ignore
     <div ref={markContextRef}>
-      <For each={collapsedTrees()}>
-        {(tree) => <Branch contextTree={tree} />}
-      </For>
+      <Branch contextTree={collapsedTree()} />
     </div>
   );
 }
