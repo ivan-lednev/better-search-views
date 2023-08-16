@@ -5,10 +5,6 @@
 > - You need to reload Obsidian after you **install/update/enable/disable** the plugin
 > - The plugin reaches into Obsidian's internals, so it may break after an update. If you noticed that, [please create an issue](https://github.com/ivan-lednev/better-search-views/issues)
 
-## Installation
-
-Until the plugin added to the community plugin list, you can try it out via [BRAT](https://github.com/TfTHacker/obsidian42-brat), the download code is `ivan-lednev/better-search-views`
-
 ## What it does
 
 The plugin brings more outliner goodness into Obsidian: it improves search views to create an outliner-like context around every match.
