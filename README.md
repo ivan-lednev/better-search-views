@@ -5,6 +5,10 @@
 > - You need to reload Obsidian after you **install/update/enable/disable** the plugin
 > - The plugin reaches into Obsidian's internals, so it may break after an update. If you noticed that, [please create an issue](https://github.com/ivan-lednev/better-search-views/issues)
 
+## How to use it
+
+Just install it and reload Obsidian. Now Obsidian's built-in global search, backlinks and queries should be decorated with breadcrumbs.
+
 ## What it does
 
 The plugin brings more outliner goodness into Obsidian: it improves search views to create an outliner-like context around every match.
@@ -34,10 +38,6 @@ The plugin brings more outliner goodness into Obsidian: it improves search views
 ### Hovering over any element with the control key pressed triggers a pop-up
 
 ![image](hover-demo.gif)
-
-## How to use it
-
-Just install it and reload Obsidian.
 
 ## Contribution
 
