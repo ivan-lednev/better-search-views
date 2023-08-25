@@ -26,8 +26,8 @@ export class Patcher {
   private readonly wrappedMatches = new WeakSet();
   private readonly wrappedSearchResultItems = new WeakSet();
   private currentNotice: Notice;
-  private searchResultItemPatched = false;
-  private renderContentMatchesPatched = false;
+  private triedPatchingSearchResultItem = false;
+  private triedPatchingRenderContentMatches = false;
   private readonly disposerRegistry = new DisposerRegistry();
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
@@ -40,15 +40,22 @@ export class Patcher {
           return function (child: any, ...args: any[]) {
             const thisIsSearchView = this.hasOwnProperty("searchQuery");
 
-            if (thisIsSearchView && !patcher.searchResultItemPatched) {
-              patcher.patchSearchResultDom(child.dom);
-              patcher.searchResultItemPatched = true;
+            if (thisIsSearchView && !patcher.triedPatchingSearchResultItem) {
+              patcher.triedPatchingSearchResultItem = true;
+              try {
+                patcher.patchSearchResultDom(child.dom);
+              } catch (error) {
+                patcher.reportError(
+                  error,
+                  "Error while patching Obsidian internals",
+                );
+              }
             }
 
             return old.call(this, child, ...args);
           };
         },
-      })
+      }),
     );
   }
 
@@ -62,10 +69,16 @@ export class Patcher {
 
             const result = old.call(this, ...args);
 
-            if (!patcher.renderContentMatchesPatched) {
-              // todo: catch errors
-              patcher.patchSearchResultItem(result);
-              patcher.renderContentMatchesPatched = true;
+            if (!patcher.triedPatchingRenderContentMatches) {
+              patcher.triedPatchingRenderContentMatches = true;
+              try {
+                patcher.patchSearchResultItem(result);
+              } catch (error) {
+                patcher.reportError(
+                  error,
+                  "Error while patching Obsidian internals",
+                );
+              }
             }
 
             return result;
@@ -143,7 +156,10 @@ export class Patcher {
               // we already mounted the whole thing to the first child, so discard the rest
               this.vChildren._children = this.vChildren._children.slice(0, 1);
             } catch (e) {
-              patcher.reportError(e, this.file.path);
+              patcher.reportError(
+                e,
+                `Failed to mount context tree for file path: ${this.file.path}`,
+              );
             }
 
             return result;
@@ -153,11 +169,10 @@ export class Patcher {
     );
   }
 
-  reportError(error: any, filePath: string) {
-    const message = `Error while mounting Better Search Views tree for file path: ${filePath}`;
+  reportError(error: any, message: string) {
     this.currentNotice?.hide();
     this.currentNotice = new Notice(
-      `${message}. Please report an issue with the details from the console attached.`,
+      `Better Search Views: ${message}. Please report an issue with the details from the console attached.`,
       errorTimeout,
     );
     console.error(`${message}. Reason:`, error);
