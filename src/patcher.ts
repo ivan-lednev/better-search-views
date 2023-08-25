@@ -194,7 +194,9 @@ export class Patcher {
     const { cache, content } = match;
     const { file } = container;
 
-    if (file.extension === "canvas") {
+    const matchIsOnlyInFileName = !cache.sections || content === "";
+
+    if (file.extension === "canvas" || matchIsOnlyInFileName) {
       return;
     }
 
