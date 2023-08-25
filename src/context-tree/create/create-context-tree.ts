@@ -100,6 +100,8 @@ export function createContextTree({
     const linkIsInsideHeading = headingIndexAtPosition >= 0;
 
     if (isPositionInList(position.position, listItems)) {
+      // todo: optionally grab more context here
+
       const indexOfListItemContainingLink = getListItemIndexContaining(
         position.position,
         listItems

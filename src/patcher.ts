@@ -11,7 +11,11 @@ import { dedupeMatches } from "./context-tree/dedupe/dedupe-matches";
 const errorTimeout = 10000;
 
 // todo: add types
-function getHighlightsFromVChild({ content, matches: [[start, end]] }: any) {
+function getHighlightsFromVChild(vChild: any) {
+  const { content, matches } = vChild;
+  const firstMatch = matches[0];
+  const [start, end] = firstMatch;
+
   return content
     .substring(start, end)
     .toLowerCase()
@@ -59,6 +63,7 @@ export class Patcher {
             const result = old.call(this, ...args);
 
             if (!patcher.renderContentMatchesPatched) {
+              // todo: catch errors
               patcher.patchSearchResultItem(result);
               patcher.renderContentMatchesPatched = true;
             }
@@ -73,7 +78,7 @@ export class Patcher {
             return old.call(this, ...args);
           };
         },
-      })
+      }),
     );
   }
 
@@ -97,15 +102,31 @@ export class Patcher {
             patcher.wrappedSearchResultItems.add(this);
 
             try {
+              let someMatchIsInProperties = false;
+
               const matchPositions = this.vChildren._children.map(
                 // todo: works only for one match per block
-                ({ content, matches: [[start, end]] }: any) =>
-                  createPositionFromOffsets(content, start, end)
+                (child: any) => {
+                  const { content, matches } = child;
+                  const firstMatch = matches[0];
+
+                  if (Object.hasOwn(firstMatch, "key")) {
+                    someMatchIsInProperties = true;
+                    return null;
+                  }
+
+                  const [start, end] = firstMatch;
+                  return createPositionFromOffsets(content, start, end);
+                },
               );
+
+              if (someMatchIsInProperties) {
+                return result;
+              }
 
               // todo: move out
               const highlights: string[] = this.vChildren._children.map(
-                getHighlightsFromVChild
+                getHighlightsFromVChild,
               );
 
               const deduped = [...new Set(highlights)];
@@ -116,7 +137,7 @@ export class Patcher {
                 firstMatch,
                 matchPositions,
                 deduped,
-                this.parent.infinityScroll
+                this.parent.infinityScroll,
               );
 
               // we already mounted the whole thing to the first child, so discard the rest
@@ -128,7 +149,7 @@ export class Patcher {
             return result;
           };
         },
-      })
+      }),
     );
   }
 
@@ -137,7 +158,7 @@ export class Patcher {
     this.currentNotice?.hide();
     this.currentNotice = new Notice(
       `${message}. Please report an issue with the details from the console attached.`,
-      errorTimeout
+      errorTimeout,
     );
     console.error(`${message}. Reason:`, error);
   }
@@ -147,7 +168,7 @@ export class Patcher {
     match: any,
     positions: any[],
     highlights: string[],
-    infinityScroll: any
+    infinityScroll: any,
   ) {
     if (this.wrappedMatches.has(match)) {
       return;
