@@ -11,6 +11,22 @@ Just install it and reload Obsidian. Now Obsidian's built-in global search, back
 
 ## What it does
 
+### Before 'Better Search Views', search results look like this:
+
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/4069c2ef-6ec9-4a87-9881-2d300cddd10e)
+
+### After 'Better Search Views' they look like this:
+
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/b191f14a-b75c-46d9-a19c-a8f91cafcd9f)
+
+### A closer look
+
+Let's open one of the files with matches, and see how the hierarchy in the search result matches the file:
+![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/953b2de2-cc9a-496c-ad85-27f0c361424a)
+
+
+### But what does it do exactly?
+
 The plugin brings more outliner goodness into Obsidian: it improves search views to create an outliner-like context around every match.
 - **It patches native search, backlinks view, embedded backlinks and embedded queries**
 - It renders markdown in the match to HTML
@@ -18,16 +34,11 @@ The plugin brings more outliner goodness into Obsidian: it improves search views
 - If the match is in a list item, it displays all the sub-list items below it
 - If the match is in a heading, it displays the first section below the heading (you know, for context)
 
-### Global search looks like this
-
-![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/844d217f-2c70-42fa-83a3-d38d81294f6a)
-![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/94ee1165-4ee3-4af9-8031-fb4b7f13588c)
-
-### And here's backlinks in document
+### Backlinks in document look like this
 
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/2f5229bc-8d3d-4027-b01c-fa36d5872716)
 
-### Embedded queries
+### Embedded queries look like this
 
 ![image](https://github.com/ivan-lednev/better-search-views/assets/41428836/bdf7fb5d-dcc2-4067-9abb-9c2064c09a27)
 
