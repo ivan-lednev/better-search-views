@@ -22,8 +22,9 @@ export function Title(props: TitleProps) {
     <div class="better-search-views-titles-container">
       <For each={props.breadcrumbs}>
         {(breadcrumb, i) => {
-          const handleTitleClick = async () =>
+          const handleTitleClick = async (event: MouseEvent) =>
             await handleClick(
+              event,
               props.contextTree.filePath,
               breadcrumb.position.start.line,
             );

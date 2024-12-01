@@ -8,7 +8,7 @@ interface MatchSectionProps {
 }
 
 export function MatchSection(props: MatchSectionProps) {
-  const { handleClick, handleMouseover } = usePluginContext();
+  const { handleClick, handleMouseover, app } = usePluginContext();
   const matchLifecycleManager = new Component();
 
   onCleanup(() => {
@@ -26,7 +26,8 @@ export function MatchSection(props: MatchSectionProps) {
               <div
                 class="search-result-file-match better-search-views-file-match markdown-preview-view markdown-rendered"
                 ref={async (el) => {
-                  await MarkdownRenderer.renderMarkdown(
+                  await MarkdownRenderer.render(
+                    app,
                     section.text,
                     el,
                     section.filePath,
@@ -35,8 +36,8 @@ export function MatchSection(props: MatchSectionProps) {
 
                   matchLifecycleManager.load();
                 }}
-                onClick={async () => {
-                  await handleClick(section.filePath, line);
+                onClick={async (event) => {
+                  await handleClick(event, section.filePath, line);
                 }}
                 onMouseOver={(event) => {
                   handleMouseover(event, section.filePath, line);

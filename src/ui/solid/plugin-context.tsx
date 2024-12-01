@@ -1,5 +1,5 @@
 import { JSX, createContext, useContext } from "solid-js";
-import { Keymap, MarkdownView, Notice } from "obsidian";
+import { App, Keymap, MarkdownView, Notice } from "obsidian";
 import BetterBacklinksPlugin from "../../plugin";
 import { MouseOverEvent } from "../../types";
 
@@ -10,19 +10,28 @@ interface PluginContextProps {
 }
 
 interface PluginContextValue {
-  handleClick: (path: string, line?: number) => Promise<void>;
+  handleClick: (
+    event: MouseEvent,
+    path: string,
+    line?: number,
+  ) => Promise<void>;
   handleMouseover: (event: MouseOverEvent, path: string, line?: number) => void;
   handleHeightChange: () => void;
   plugin: BetterBacklinksPlugin;
+  app: App;
 }
 
 const PluginContext = createContext<PluginContextValue>();
 
 export function PluginContextProvider(props: PluginContextProps) {
-  const handleClick = async (path: string, line: number) => {
+  const handleClick = async (event: MouseEvent, path: string, line: number) => {
+    if (event.target instanceof HTMLAnchorElement) {
+      return;
+    }
+
     const file = props.plugin.app.metadataCache.getFirstLinkpathDest(
       path,
-      path
+      path,
     );
 
     if (!file) {
@@ -51,7 +60,7 @@ export function PluginContextProvider(props: PluginContextProps) {
   const handleMouseover = (
     event: MouseOverEvent,
     path: string,
-    line: number
+    line: number,
   ) => {
     // @ts-ignore
     if (!props.plugin.app.internalPlugins.plugins["page-preview"].enabled) {
@@ -70,7 +79,7 @@ export function PluginContextProvider(props: PluginContextProps) {
           target,
           path,
           "",
-          previewLocation
+          previewLocation,
         );
       }
     }
@@ -87,6 +96,7 @@ export function PluginContextProvider(props: PluginContextProps) {
         handleMouseover,
         handleHeightChange,
         plugin: props.plugin,
+        app: props.plugin.app,
       }}
     >
       {props.children}
