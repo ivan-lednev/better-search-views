@@ -39,11 +39,15 @@ export class Patcher {
         addChild(old: Component["addChild"]) {
           return function (child: any, ...args: any[]) {
             const thisIsSearchView = this.hasOwnProperty("searchQuery");
+            const hasBacklinks = child?.backlinkDom;
 
-            if (thisIsSearchView && !patcher.triedPatchingSearchResultItem) {
+            if (
+              (thisIsSearchView || hasBacklinks) &&
+              !patcher.triedPatchingSearchResultItem
+            ) {
               patcher.triedPatchingSearchResultItem = true;
               try {
-                patcher.patchSearchResultDom(child.dom);
+                patcher.patchSearchResultDom(child.dom || child.backlinkDom);
               } catch (error) {
                 patcher.reportError(
                   error,

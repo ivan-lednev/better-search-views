@@ -25,22 +25,15 @@ export function Title(props: TitleProps) {
           const handleTitleClick = async () =>
             await handleClick(
               props.contextTree.filePath,
-              breadcrumb.position.start.line
+              breadcrumb.position.start.line,
             );
 
           const handleTitleMouseover = (event: MouseOverEvent) =>
             handleMouseover(
               event,
               props.contextTree.filePath,
-              breadcrumb.position.start.line
+              breadcrumb.position.start.line,
             );
-
-          const previousIsHeading =
-            props.breadcrumbs[i() - 1]?.type === "heading";
-          const isFirstListItemInBreadcrumbs =
-            breadcrumb.type === "list" && (i() === 0 || previousIsHeading);
-          const isFirstHeadingInBreadcrumbs =
-            i() === 0 && breadcrumb.type === "heading";
 
           return (
             <div class="tree-item-inner">
@@ -50,11 +43,8 @@ export function Title(props: TitleProps) {
                 onMouseOver={handleTitleMouseover}
               >
                 <div class="better-search-views-breadcrumb-token">
-                  <Switch fallback={<ArrowRightIcon />}>
-                    <Match when={isFirstListItemInBreadcrumbs}>
-                      <ListIcon />
-                    </Match>
-                    <Match when={isFirstHeadingInBreadcrumbs}>
+                  <Switch fallback={<ListIcon />}>
+                    <Match when={breadcrumb.type === "heading"}>
                       <HeadingIcon />
                     </Match>
                   </Switch>
