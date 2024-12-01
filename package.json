@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "0.2.2",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "better-search-views",
+	"version": "0.3.0",
+	"description": "Outliner-like breadcrumb trees for search, backlinks and embedded queries ",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
