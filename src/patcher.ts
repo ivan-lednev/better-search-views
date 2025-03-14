@@ -42,7 +42,8 @@ export class Patcher {
             const hasBacklinks = child?.backlinkDom;
 
             if (
-              (thisIsSearchView || hasBacklinks) &&
+              ((thisIsSearchView && patcher.plugin.settings.enhanceSearchView) ||
+               (hasBacklinks && patcher.plugin.settings.enhanceBacklinksView)) &&
               !patcher.triedPatchingSearchResultItem
             ) {
               patcher.triedPatchingSearchResultItem = true;
