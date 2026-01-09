@@ -7,6 +7,7 @@ import BetterSearchViewsPlugin from "./plugin";
 import { wikiLinkBrackets } from "./patterns";
 import { DisposerRegistry } from "./disposer-registry";
 import { dedupeMatches } from "./context-tree/dedupe/dedupe-matches";
+import { getSectionContaining } from "./metadata-cache-util/section";
 
 const errorTimeout = 10000;
 
@@ -20,6 +21,26 @@ function getHighlightsFromVChild(vChild: any) {
     .substring(start, end)
     .toLowerCase()
     .replace(wikiLinkBrackets, "");
+}
+
+// Check if a vChild match is inside a code block
+function isMatchInCodeBlock(child: any): boolean {
+  const { content, matches, cache } = child;
+  if (!cache?.sections || !matches?.[0]) {
+    return false;
+  }
+  
+  const firstMatch = matches[0];
+  // Skip property matches (they have a 'key' property)
+  if (Object.hasOwn(firstMatch, "key")) {
+    return false;
+  }
+  
+  const [start, end] = firstMatch;
+  const matchPos = createPositionFromOffsets(content, start, end);
+  const section = getSectionContaining(matchPos.position, cache.sections);
+  
+  return section?.type === "code";
 }
 
 export class Patcher {
@@ -119,9 +140,26 @@ export class Patcher {
             patcher.wrappedSearchResultItems.add(this);
 
             try {
+              // Separate code block matches from non-code block matches
+              const codeBlockChildren: any[] = [];
+              const nonCodeBlockChildren: any[] = [];
+              
+              for (const child of this.vChildren._children) {
+                if (isMatchInCodeBlock(child)) {
+                  codeBlockChildren.push(child);
+                } else {
+                  nonCodeBlockChildren.push(child);
+                }
+              }
+              
+              // If all matches are in code blocks, let Obsidian handle them all
+              if (nonCodeBlockChildren.length === 0) {
+                return result;
+              }
+
               let someMatchIsInProperties = false;
 
-              const matchPositions = this.vChildren._children.map(
+              const matchPositions = nonCodeBlockChildren.map(
                 // todo: works only for one match per block
                 (child: any) => {
                   const { content, matches } = child;
@@ -142,23 +180,24 @@ export class Patcher {
               }
 
               // todo: move out
-              const highlights: string[] = this.vChildren._children.map(
+              const highlights: string[] = nonCodeBlockChildren.map(
                 getHighlightsFromVChild,
               );
 
               const deduped = [...new Set(highlights)];
 
-              const firstMatch = this.vChildren._children[0];
+              const firstNonCodeBlockMatch = nonCodeBlockChildren[0];
               patcher.mountContextTreeOnMatchEl(
                 this,
-                firstMatch,
+                firstNonCodeBlockMatch,
                 matchPositions,
                 deduped,
                 this.parent.infinityScroll,
               );
 
-              // we already mounted the whole thing to the first child, so discard the rest
-              this.vChildren._children = this.vChildren._children.slice(0, 1);
+              // Keep only the first non-code-block child (for our custom rendering)
+              // plus all code block children (for Obsidian's default rendering)
+              this.vChildren._children = [nonCodeBlockChildren[0], ...codeBlockChildren];
             } catch (e) {
               patcher.reportError(
                 e,
@@ -224,6 +263,30 @@ export class Patcher {
 
     this.disposerRegistry.addOnEmptyResultsCallback(dispose);
 
-    match.el = mountPoint;
+    // Instead of replacing match.el entirely, we preserve the original element
+    // and append our custom content to it. This is important because Obsidian
+    // adds the "Link" button for unlinked mentions to match.el on hover.
+    // If we replace match.el, Obsidian can no longer find the element to add
+    // the button to.
+    
+    // Clear existing content from match.el while preserving the element itself
+    // We need to preserve any buttons that Obsidian might have already added
+    const existingLinkButton = match.el.querySelector('.search-result-file-match-replace-button');
+    const existingHoverButtons = match.el.querySelectorAll('.search-result-hover-button');
+    
+    match.el.empty();
+    
+    // Append our custom rendered content
+    match.el.appendChild(mountPoint);
+    
+    // Re-append the Link button if it exists (for unlinked mentions)
+    if (existingLinkButton) {
+      match.el.appendChild(existingLinkButton);
+    }
+    
+    // Re-append hover buttons if they exist
+    existingHoverButtons.forEach((button: Element) => {
+      match.el.appendChild(button);
+    });
   }
 }

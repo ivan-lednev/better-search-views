@@ -57,7 +57,7 @@ export function createContextTree({
 
     for (const headingCache of headingBreadcrumbs) {
       const headingFoundInChildren = context.branches.find((tree) =>
-        isSamePosition(tree.cacheItem.position, headingCache.position),
+        isSamePosition(tree.cacheItem.position, headingCache.position)
       );
 
       if (headingFoundInChildren) {
@@ -68,7 +68,7 @@ export function createContextTree({
           headingCache,
           stat,
           filePath,
-          headingCache.heading,
+          headingCache.heading
         );
 
         context.branches.push(newContext);
@@ -78,7 +78,7 @@ export function createContextTree({
 
     for (const listItemCache of listBreadcrumbs) {
       const listItemFoundInChildren = context.branches.find((tree) =>
-        isSamePosition(tree.cacheItem.position, listItemCache.position),
+        isSamePosition(tree.cacheItem.position, listItemCache.position)
       );
 
       if (listItemFoundInChildren) {
@@ -89,7 +89,7 @@ export function createContextTree({
           listItemCache,
           stat,
           filePath,
-          getTextAtPosition(fileContents, listItemCache.position),
+          getTextAtPosition(fileContents, listItemCache.position)
         );
 
         context.branches.push(newListContext);
@@ -100,7 +100,7 @@ export function createContextTree({
     // todo: move to metadata-cache-util
     const headingIndexAtPosition = getHeadingIndexContaining(
       position.position,
-      headings,
+      headings
     );
     const linkIsInsideHeading = headingIndexAtPosition >= 0;
 
@@ -109,15 +109,15 @@ export function createContextTree({
 
       const indexOfListItemContainingLink = getListItemIndexContaining(
         position.position,
-        listItems,
+        listItems
       );
       const listItemCacheWithDescendants = getListItemWithDescendants(
         indexOfListItemContainingLink,
-        listItems,
+        listItems
       );
       const text = formatListWithDescendants(
         fileContents,
-        listItemCacheWithDescendants,
+        listItemCacheWithDescendants
       );
 
       context.sectionsWithMatches.push({
@@ -130,7 +130,7 @@ export function createContextTree({
     } else if (linkIsInsideHeading) {
       const firstSectionUnderHeading = getFirstSectionUnder(
         position.position,
-        sections,
+        sections
       );
 
       if (firstSectionUnderHeading) {
@@ -138,7 +138,7 @@ export function createContextTree({
           cache: firstSectionUnderHeading,
           text: getTextAtPosition(
             fileContents,
-            firstSectionUnderHeading.position,
+            firstSectionUnderHeading.position
           ),
           filePath,
         });
@@ -146,7 +146,7 @@ export function createContextTree({
     } else {
       const sectionText = getTextAtPosition(
         fileContents,
-        sectionCache.position,
+        sectionCache.position
       );
       context.sectionsWithMatches.push({
         cache: sectionCache,
@@ -164,7 +164,7 @@ function createContextTreeBranch(
   cacheItem: CacheItem,
   stat: FileStats,
   filePath: string,
-  text: string,
+  text: string
 ) {
   return {
     type,

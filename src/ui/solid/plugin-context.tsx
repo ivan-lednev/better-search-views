@@ -71,6 +71,7 @@ export function PluginContextProvider(props: PluginContextProps) {
       const target = event.target as HTMLElement;
       const previewLocation = {
         scroll: line,
+        line: line,
       };
       if (path) {
         props.plugin.app.workspace.trigger(
