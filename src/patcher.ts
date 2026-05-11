@@ -9,6 +9,7 @@ import { DisposerRegistry } from "./disposer-registry";
 import { dedupeMatches } from "./context-tree/dedupe/dedupe-matches";
 
 const errorTimeout = 10000;
+const patchVersion = 6;
 
 // todo: add types
 function getHighlightsFromVChild(vChild: any) {
@@ -25,9 +26,9 @@ function getHighlightsFromVChild(vChild: any) {
 export class Patcher {
   private readonly wrappedMatches = new WeakSet();
   private readonly wrappedSearchResultItems = new WeakSet();
-  private currentNotice: Notice;
-  private triedPatchingSearchResultItem = false;
-  private triedPatchingRenderContentMatches = false;
+  private readonly patchedSearchResultDomConstructors = new WeakSet();
+  private readonly patchedSearchResultItemConstructors = new WeakSet();
+  private currentNotice: Notice | undefined;
   private readonly disposerRegistry = new DisposerRegistry();
 
   constructor(private readonly plugin: BetterSearchViewsPlugin) {}
@@ -39,15 +40,11 @@ export class Patcher {
         addChild(old: Component["addChild"]) {
           return function (child: any, ...args: any[]) {
             const thisIsSearchView = this.hasOwnProperty("searchQuery");
-            const hasBacklinks = child?.backlinkDom;
+            const hasBacklinks = child?.backlinkDom || child?.unlinkedDom;
 
-            if (
-              (thisIsSearchView || hasBacklinks) &&
-              !patcher.triedPatchingSearchResultItem
-            ) {
-              patcher.triedPatchingSearchResultItem = true;
+            if (thisIsSearchView || hasBacklinks) {
               try {
-                patcher.patchSearchResultDom(child.dom || child.backlinkDom);
+                patcher.patchSearchResultHolder(child);
               } catch (error) {
                 patcher.reportError(
                   error,
@@ -65,112 +62,144 @@ export class Patcher {
 
   patchSearchResultDom(searchResultDom: any) {
     const patcher = this;
-    this.plugin.register(
-      around(searchResultDom.constructor.prototype, {
-        addResult(old: any) {
-          return function (...args: any[]) {
-            patcher.disposerRegistry.onAddResult(this);
 
-            const result = old.call(this, ...args);
+    const searchResultDomConstructor = searchResultDom?.constructor;
+    if (!searchResultDomConstructor) {
+      return;
+    }
 
-            if (!patcher.triedPatchingRenderContentMatches) {
-              patcher.triedPatchingRenderContentMatches = true;
-              try {
-                patcher.patchSearchResultItem(result);
-              } catch (error) {
-                patcher.reportError(
-                  error,
-                  "Error while patching Obsidian internals",
-                );
-              }
+    const searchResultDomPrototype = searchResultDomConstructor.prototype;
+    if (searchResultDomPrototype.__betterSearchViewsAddResultPatched === patchVersion) {
+      this.patchedSearchResultDomConstructors.add(searchResultDomConstructor);
+      return;
+    }
+
+    this.patchedSearchResultDomConstructors.delete(searchResultDomConstructor);
+    const removePatch = around(searchResultDomPrototype, {
+      addResult(old: any) {
+        return function (...args: any[]) {
+          patcher.disposerRegistry.onAddResult(this);
+
+          const result = old.call(this, ...args);
+
+          try {
+            patcher.patchSearchResultItem(result);
+            if (result?.rendered) {
+              result.renderContentMatches();
             }
+          } catch (error) {
+            patcher.reportError(
+              error,
+              "Error while patching Obsidian internals",
+            );
+          }
 
-            return result;
-          };
-        },
-        emptyResults(old: any) {
-          return function (...args: any[]) {
-            patcher.disposerRegistry.onEmptyResults(this);
+          return result;
+        };
+      },
+      emptyResults(old: any) {
+        return function (...args: any[]) {
+          patcher.disposerRegistry.onEmptyResults(this);
 
-            return old.call(this, ...args);
-          };
-        },
-      }),
-    );
+          return old.call(this, ...args);
+        };
+      },
+    });
+
+    searchResultDomPrototype.__betterSearchViewsAddResultPatched = patchVersion;
+    this.plugin.register(() => {
+      removePatch();
+      delete searchResultDomPrototype.__betterSearchViewsAddResultPatched;
+    });
+    this.patchedSearchResultDomConstructors.add(searchResultDomConstructor);
   }
 
   patchSearchResultItem(searchResultItem: any) {
     const patcher = this;
-    this.plugin.register(
-      around(searchResultItem.constructor.prototype, {
-        renderContentMatches(old: any) {
-          return function (...args: any[]) {
-            const result = old.call(this, ...args);
 
-            // todo: clean this up
-            if (
-              patcher.wrappedSearchResultItems.has(this) ||
-              !this.vChildren._children ||
-              this.vChildren._children.length === 0
-            ) {
-              return result;
-            }
+    const searchResultItemConstructor = searchResultItem?.constructor;
+    if (!searchResultItemConstructor) {
+      return;
+    }
 
-            patcher.wrappedSearchResultItems.add(this);
+    const searchResultItemPrototype = searchResultItemConstructor.prototype;
+    if (
+      searchResultItemPrototype.__betterSearchViewsRenderContentMatchesPatched ===
+      patchVersion
+    ) {
+      this.patchedSearchResultItemConstructors.add(searchResultItemConstructor);
+      return;
+    }
 
-            try {
-              let someMatchIsInProperties = false;
+    this.patchedSearchResultItemConstructors.delete(searchResultItemConstructor);
+    const removePatch = around(searchResultItemPrototype, {
+      renderContentMatches(old: any) {
+        return function (...args: any[]) {
+          const result = old.call(this, ...args);
 
-              const matchPositions = this.vChildren._children.map(
-                // todo: works only for one match per block
-                (child: any) => {
-                  const { content, matches } = child;
-                  const firstMatch = matches[0];
+          try {
+            patcher.mountContextTreeForSearchResultItem(this);
+          } catch (e) {
+            patcher.reportError(
+              e,
+              `Failed to mount context tree for file path: ${this.file.path}`,
+            );
+          }
 
-                  if (Object.hasOwn(firstMatch, "key")) {
-                    someMatchIsInProperties = true;
-                    return null;
-                  }
+          return result;
+        };
+      },
+    });
 
-                  const [start, end] = firstMatch;
-                  return createPositionFromOffsets(content, start, end);
-                },
-              );
+    searchResultItemPrototype.__betterSearchViewsRenderContentMatchesPatched =
+      patchVersion;
+    this.plugin.register(() => {
+      removePatch();
+      delete searchResultItemPrototype.__betterSearchViewsRenderContentMatchesPatched;
+    });
+    this.patchedSearchResultItemConstructors.add(searchResultItemConstructor);
+  }
 
-              if (someMatchIsInProperties) {
-                return result;
-              }
-
-              // todo: move out
-              const highlights: string[] = this.vChildren._children.map(
-                getHighlightsFromVChild,
-              );
-
-              const deduped = [...new Set(highlights)];
-
-              const firstMatch = this.vChildren._children[0];
-              patcher.mountContextTreeOnMatchEl(
-                this,
-                firstMatch,
-                matchPositions,
-                deduped,
-                this.parent.infinityScroll,
-              );
-
-              // we already mounted the whole thing to the first child, so discard the rest
-              this.vChildren._children = this.vChildren._children.slice(0, 1);
-            } catch (e) {
-              patcher.reportError(
-                e,
-                `Failed to mount context tree for file path: ${this.file.path}`,
-              );
-            }
-
-            return result;
-          };
-        },
-      }),
+  mountContextTreeForSearchResultItem(searchResultItem: any) {
+    const alreadyRenderedTree = searchResultItem?.el.querySelector(
+      ".better-search-views-tree",
     );
+    if (
+      (this.wrappedSearchResultItems.has(searchResultItem) &&
+        alreadyRenderedTree) ||
+      !searchResultItem?.vChildren?._children ||
+      searchResultItem.vChildren._children.length === 0
+    ) {
+      return;
+    }
+
+    const contentMatches = this.getMountableContentMatches(searchResultItem);
+
+    if (contentMatches.length === 0) {
+      return;
+    }
+
+    const matchPositions = contentMatches.map((child: any) => {
+      const { content, matches } = child;
+      const [start, end] = matches[0];
+      return createPositionFromOffsets(content, start, end);
+    });
+
+    const highlights: string[] = contentMatches.map(getHighlightsFromVChild);
+    const deduped = [...new Set(highlights)];
+    const firstMatch = contentMatches[0];
+
+    this.disposerRegistry.onAddResult(searchResultItem.parentDom);
+    this.mountContextTreeOnMatchEl(
+      searchResultItem,
+      firstMatch,
+      matchPositions,
+      deduped,
+      searchResultItem.parent.infinityScroll,
+    );
+
+    searchResultItem.vChildren._children = [firstMatch];
+    this.wrappedSearchResultItems.add(searchResultItem);
   }
 
   reportError(error: any, message: string) {
@@ -189,7 +218,10 @@ export class Patcher {
     highlights: string[],
     infinityScroll: any,
   ) {
-    if (this.wrappedMatches.has(match)) {
+    if (
+      this.wrappedMatches.has(match) &&
+      match?.el.querySelector(".better-search-views-tree")
+    ) {
       return;
     }
 
@@ -213,6 +245,7 @@ export class Patcher {
     });
 
     const mountPoint = createDiv();
+    const oldEl = match.el;
 
     const dispose = renderContextTree({
       highlights,
@@ -223,7 +256,57 @@ export class Patcher {
     });
 
     this.disposerRegistry.addOnEmptyResultsCallback(dispose);
+    if (oldEl?.parentNode) {
+      oldEl.replaceWith(mountPoint);
+    } else if (container.childrenEl?.isConnected) {
+      container.childrenEl.empty();
+      container.childrenEl.appendChild(mountPoint);
+    }
 
     match.el = mountPoint;
+  }
+
+  patchExistingResults(searchResultDom: any) {
+    for (const result of searchResultDom?.vChildren?._children?.slice() || []) {
+      this.patchSearchResultItem(result);
+      if (
+        result?.rendered &&
+        !result?.el?.querySelector(".better-search-views-tree") &&
+        this.getMountableContentMatches(result).length > 0
+      ) {
+        result.renderContentMatches();
+        this.mountContextTreeForSearchResultItem(result);
+      }
+    }
+  }
+
+  private getMountableContentMatches(searchResultItem: any) {
+    return (searchResultItem?.vChildren?._children || []).filter(
+      (child: any) => {
+        const firstMatch = child?.matches?.[0];
+        return child.content && firstMatch && !Object.hasOwn(firstMatch, "key");
+      },
+    );
+  }
+
+  patchSearchResultHolder(holder: any) {
+    const searchResultDoms = [
+      holder?.dom,
+      holder?.backlinkDom,
+      holder?.unlinkedDom,
+    ];
+
+    for (const searchResultDom of searchResultDoms) {
+      if (searchResultDom?.addResult?.call) {
+        this.patchSearchResultDom(searchResultDom);
+        this.patchExistingResults(searchResultDom);
+      }
+    }
+
+    for (const child of holder?._children || []) {
+      if (child?.backlinkDom?.addResult || child?.unlinkedDom?.addResult || child?.dom) {
+        this.patchSearchResultHolder(child);
+      }
+    }
   }
 }
