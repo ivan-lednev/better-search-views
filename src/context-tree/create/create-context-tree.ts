@@ -19,6 +19,7 @@ import {
   isSamePosition,
 } from "../../metadata-cache-util/position";
 import { formatListWithDescendants } from "../../metadata-cache-util/format";
+import { getPositionForBreadcrumbs } from "../../footnotes";
 
 export function createContextTree({
   positions,
@@ -30,10 +31,22 @@ export function createContextTree({
   sections = [],
 }: createContextTreeProps) {
   const positionsWithContext = positions.map((position) => {
+    const sectionCache = getSectionContaining(position.position, sections);
+    // Footnote definitions live at the bottom of the note, so their own
+    // breadcrumbs are meaningless. Use the reference site instead.
+    const positionForBreadcrumbs = getPositionForBreadcrumbs(
+      fileContents,
+      position.position,
+      sectionCache,
+    );
+
     return {
-      headingBreadcrumbs: getHeadingBreadcrumbs(position.position, headings),
-      listBreadcrumbs: getListBreadcrumbs(position.position, listItems),
-      sectionCache: getSectionContaining(position.position, sections),
+      headingBreadcrumbs: getHeadingBreadcrumbs(
+        positionForBreadcrumbs,
+        headings,
+      ),
+      listBreadcrumbs: getListBreadcrumbs(positionForBreadcrumbs, listItems),
+      sectionCache,
       position,
     };
   });
