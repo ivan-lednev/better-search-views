@@ -188,3 +188,25 @@ body:not(.is-grabbing)
 .better-search-views-is-hidden {
   display: none;
 }
+
+/* Footnotes */
+
+.better-search-views-footnote {
+  padding: 0 0.15em;
+  color: var(--text-accent);
+  font-size: var(--font-smallest);
+  vertical-align: super;
+  line-height: 0;
+}
+
+.better-search-views-footnote::before {
+  content: "[";
+}
+
+.better-search-views-footnote::after {
+  content: "]";
+}
+
+.better-search-views-footnote-definition {
+  font-weight: var(--font-semibold);
+}

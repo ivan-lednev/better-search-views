@@ -2,6 +2,7 @@ import { For, onCleanup, Show } from "solid-js";
 import { Component, MarkdownRenderer } from "obsidian";
 import { usePluginContext } from "./plugin-context";
 import { SectionWithMatch } from "../../types";
+import { expandFootnoteSyntax } from "../../footnotes";
 
 interface MatchSectionProps {
   sectionsWithMatches: SectionWithMatch[];
@@ -28,7 +29,7 @@ export function MatchSection(props: MatchSectionProps) {
                 ref={async (el) => {
                   await MarkdownRenderer.render(
                     app,
-                    section.text,
+                    expandFootnoteSyntax(section.text),
                     el,
                     section.filePath,
                     matchLifecycleManager
